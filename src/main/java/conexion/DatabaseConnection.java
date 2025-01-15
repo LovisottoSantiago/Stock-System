@@ -17,12 +17,23 @@ public class DatabaseConnection {
 
     public Connection getConnection(String username, String password) {
         try {
-            System.out.println("Connection successful");
-            return DriverManager.getConnection(URL, username, password);
+            Connection conn = DriverManager.getConnection(URL, username, password);
+            logger.log(Level.INFO, "Connection to the database established successfully.");
+            return conn;
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Failed to connect to the database.", e);
+            return null;
         }
-        catch (SQLException e) {
-            logger.log(Level.SEVERE, "An exception has occurred", e);
-            return  null;
+    }
+
+    public void closeConnection(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.close();
+                logger.log(Level.INFO, "Database connection closed successfully.");
+            } catch (SQLException e) {
+                logger.log(Level.WARNING, "Error closing the database connection.", e);
+            }
         }
     }
 
