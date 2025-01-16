@@ -14,14 +14,15 @@ public class DatabaseConnection {
 
     private static final Logger logger = Logger.getLogger(DatabaseConnection.class.getName());
     private static final String URL = "jdbc:postgresql://localhost:5432/stock-system";
+    private boolean isConnected = false;
 
     public Connection getConnection(String username, String password) {
         try {
             Connection conn = DriverManager.getConnection(URL, username, password);
-            logger.log(Level.INFO, "Connection to the database established successfully.");
+            isConnected = true;
             return conn;
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Failed to connect to the database.", e);
+            isConnected = false;
             return null;
         }
     }
@@ -35,6 +36,10 @@ public class DatabaseConnection {
                 logger.log(Level.WARNING, "Error closing the database connection.", e);
             }
         }
+    }
+
+    public boolean getIsConnected () {
+        return isConnected;
     }
 
 }

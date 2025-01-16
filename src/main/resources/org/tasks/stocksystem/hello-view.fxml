@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="org.tasks.stocksystem.HelloController">
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.tasks.stocksystem.HelloController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -19,5 +19,6 @@
    </Label>
    <TextField fx:id="usernameLabel" promptText="username" />
    <PasswordField fx:id="passwordLabel" />
+   <Label fx:id="connectedFlag" text="not connected" textFill="#685c5c" />
     <Button onAction="#onHelloButtonClick" text="Login" />
 </VBox>
