@@ -8,7 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 
 
-public class HelloController {
+public class PantallaLogin {
     @FXML
     private TextField usernameLabel;
 

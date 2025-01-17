@@ -68,7 +68,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.tasks.stocksystem/org.tasks.stocksystem.HelloApplication</mainClass>
+                            <mainClass>org.tasks.stocksystem/org.tasks.stocksystem.StockAppMain</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
