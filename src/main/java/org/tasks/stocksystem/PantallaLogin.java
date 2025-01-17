@@ -27,11 +27,11 @@ public class PantallaLogin {
 
         boolean flag = connection.getIsConnected();
         if (flag) {
-            connectedFlag.setText("Connected.");
+            connectedFlag.setText("Conectado.");
             connectedFlag.setTextFill(Color.GREEN);
         }
         else {
-            connectedFlag.setText("Invalid credentials.");
+            connectedFlag.setText("Credenciales incorrectas.");
             connectedFlag.setTextFill(Color.RED);
         }
         System.out.println(flag);
