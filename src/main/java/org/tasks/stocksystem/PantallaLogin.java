@@ -2,10 +2,15 @@ package org.tasks.stocksystem;
 
 import conexion.DatabaseConnection;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 
 public class PantallaLogin {
@@ -19,7 +24,7 @@ public class PantallaLogin {
     private Label connectedFlag;
 
     @FXML
-    protected void onHelloButtonClick() {
+    protected void onHelloButtonClick() throws IOException {
         String username = usernameLabel.getText();
         String password = passwordLabel.getText();
         DatabaseConnection connection = new DatabaseConnection();
@@ -29,6 +34,12 @@ public class PantallaLogin {
         if (flag) {
             connectedFlag.setText("Conectado.");
             connectedFlag.setTextFill(Color.GREEN);
+
+            Stage st = new Stage();
+            start(st, connection);
+
+            Stage currentStage = (Stage) connectedFlag.getScene().getWindow();
+            currentStage.close();
         }
         else {
             connectedFlag.setText("Credenciales incorrectas.");
@@ -37,4 +48,18 @@ public class PantallaLogin {
         System.out.println(flag);
 
     }
+
+    public void start(Stage stage, DatabaseConnection connection) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(StockAppMain.class.getResource("Pantalla-Inicio.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+        PantallaInicio controller = fxmlLoader.getController();
+        controller.initData(connection);
+
+        stage.setTitle("Pantalla Principal");
+        stage.setScene(scene);
+        stage.show();
+
+    }
+
+
 }
