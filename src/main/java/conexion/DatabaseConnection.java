@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 public class DatabaseConnection {
 
-    private static final Logger logger = Logger.getLogger(DatabaseConnection.class.getName());
+    public static final Logger logger = Logger.getLogger(DatabaseConnection.class.getName());
     private static final String URL = "jdbc:postgresql://localhost:5432/stock-system";
     private boolean isConnected = false;
 
