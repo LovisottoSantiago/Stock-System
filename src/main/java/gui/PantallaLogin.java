@@ -37,7 +37,7 @@ public class PantallaLogin {
             connectedFlag.setTextFill(Color.GREEN);
 
             Stage st = new Stage();
-            start(st, connection);
+            start(st, connection, username, password);
 
             Stage currentStage = (Stage) connectedFlag.getScene().getWindow();
             currentStage.close();
@@ -50,11 +50,11 @@ public class PantallaLogin {
 
     }
 
-    public void start(Stage stage, DatabaseConnection connection) throws IOException {
+    public void start(Stage stage, DatabaseConnection connection, String username, String password) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(StockAppMain.class.getResource("Pantalla-Inicio.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
         PantallaInicio controller = fxmlLoader.getController();
-        controller.initData(connection);
+        controller.initData(connection, username, password);
 
         stage.setTitle("Pantalla Principal");
         stage.setScene(scene);
