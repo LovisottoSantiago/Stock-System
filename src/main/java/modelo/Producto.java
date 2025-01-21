@@ -16,4 +16,10 @@ public class Producto {
         this.precio = precio;
     }
 
+    public void Mostrar(){
+        System.out.println("ID: " + id);
+        System.out.println("Titulo: " + titulo);
+        System.out.println("Precio: " + precio);
+    }
+
 }

@@ -2,6 +2,12 @@ package gui;
 
 import conexion.DatabaseConnection;
 import dao.ProductoDao;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import modelo.Producto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PantallaInicio {
 
@@ -9,6 +15,8 @@ public class PantallaInicio {
     private String username;
     private String password;
     private ProductoDao productoDao = new ProductoDao();
+
+
 
     public void initData(DatabaseConnection connection, String username, String password) {
         this.connection = connection;
@@ -19,7 +27,10 @@ public class PantallaInicio {
 
 
     public void showProducts(){
-        productoDao.getAllProductos(connection.getConnection(username, password));
+        List<Producto> pro = productoDao.getAllProductos(connection.getConnection(username, password));
+        for (Producto i : pro) {
+            i.Mostrar();
+        }
     }
 
 }
