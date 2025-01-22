@@ -1,25 +1,31 @@
 package modelo;
 
+import javafx.beans.property.*;
+
 public class Producto {
+    private IntegerProperty id;
+    private StringProperty titulo;
+    private StringProperty categoria;
+    private IntegerProperty cantidad;
+    private DoubleProperty precio;
 
-    private int id;
-    private String titulo;
-    private String categoria;
-    private int cantidad;
-    private double precio;
-
-    public Producto(int id, String titulo, String categoria, int cantidad, double precio){
-        this.id = id;
-        this.titulo = titulo;
-        this.categoria = categoria;
-        this.cantidad = cantidad;
-        this.precio = precio;
+    public Producto(int id, String titulo, String categoria, int cantidad, double precio) {
+        this.id = new SimpleIntegerProperty(id);
+        this.titulo = new SimpleStringProperty(titulo);
+        this.categoria = new SimpleStringProperty(categoria);
+        this.cantidad = new SimpleIntegerProperty(cantidad);
+        this.precio = new SimpleDoubleProperty(precio);
     }
 
-    public void Mostrar(){
-        System.out.println("ID: " + id);
-        System.out.println("Titulo: " + titulo);
-        System.out.println("Precio: " + precio);
-    }
+    public IntegerProperty idProperty() { return id; }
+    public StringProperty tituloProperty() { return titulo; }
+    public StringProperty categoriaProperty() { return categoria; }
+    public IntegerProperty cantidadProperty() { return cantidad; }
+    public DoubleProperty precioProperty() { return precio; }
 
+    public int getId() { return id.get(); }
+    public String getTitulo() { return titulo.get(); }
+    public String getCategoria() { return categoria.get(); }
+    public int getCantidad() { return cantidad.get(); }
+    public double getPrecio() { return precio.get(); }
 }
