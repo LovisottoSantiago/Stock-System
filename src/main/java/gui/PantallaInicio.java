@@ -38,9 +38,11 @@ public class PantallaInicio {
         this.username = username;
         this.password = password;
         System.out.println("Conexión establecida: " + connection);
+
+        showProducts();
     }
 
-
+    // Show products in the Table
     public void showProducts(){
         List<Producto> productos = productoDao.getAllProductos(connection.getConnection(username, password));
 
