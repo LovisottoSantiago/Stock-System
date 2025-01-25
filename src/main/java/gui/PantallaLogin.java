@@ -52,7 +52,7 @@ public class PantallaLogin {
 
     public void start(Stage stage, DatabaseConnection connection, String username, String password) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(StockAppMain.class.getResource("Pantalla-Inicio.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+        Scene scene = new Scene(fxmlLoader.load(), 1024, 540);
         PantallaInicio controller = fxmlLoader.getController();
         controller.initData(connection, username, password);
 

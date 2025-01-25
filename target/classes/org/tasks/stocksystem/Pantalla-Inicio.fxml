@@ -5,15 +5,15 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<AnchorPane fx:id="testBtn" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PantallaInicio">
+<AnchorPane fx:id="testBtn" maxHeight="540.0" maxWidth="1024.0" minHeight="540.0" minWidth="1024.0" prefHeight="540.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PantallaInicio">
    <children>
-      <TableView fx:id="tableView" layoutX="46.0" layoutY="34.0" prefHeight="289.0" prefWidth="377.0">
+      <TableView id="my-table" fx:id="tableView" layoutX="46.0" layoutY="34.0" prefHeight="289.0" prefWidth="677.0" stylesheets="@styles.css">
         <columns>
-          <TableColumn fx:id="columnId" prefWidth="75.0" text="ID" />
-          <TableColumn fx:id="columnTitulo" prefWidth="75.0" text="Titulo" />
-            <TableColumn fx:id="columnCategoria" prefWidth="75.0" text="Categoria" />
-            <TableColumn fx:id="columnCantidad" prefWidth="75.0" text="Cantidad" />
-            <TableColumn fx:id="columnPrecio" prefWidth="75.0" text="Precio" />
+          <TableColumn fx:id="columnId" editable="false" prefWidth="135.0" resizable="false" text="ID" />
+          <TableColumn fx:id="columnTitulo" editable="false" prefWidth="150.0" text="Titulo" />
+            <TableColumn fx:id="columnCategoria" editable="false" prefWidth="165.0" text="Categoria" />
+            <TableColumn fx:id="columnCantidad" editable="false" prefWidth="102.0" text="Cantidad" />
+            <TableColumn fx:id="columnPrecio" editable="false" prefWidth="124.0" text="Precio" />
         </columns>
       </TableView>
    </children>
