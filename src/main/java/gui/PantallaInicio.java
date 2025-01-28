@@ -5,18 +5,16 @@ import dao.ProductoDao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import modelo.Producto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PantallaInicio {
 
     @FXML
-    private TableView<Producto> tableView;
+    private TableView<Producto> tablaProductos;
     @FXML
     private TableColumn<Producto, Integer> columnId;
     @FXML
@@ -47,7 +45,7 @@ public class PantallaInicio {
         List<Producto> productos = productoDao.getAllProductos(connection.getConnection(username, password));
 
         ObservableList<Producto> observableProductos = FXCollections.observableArrayList(productos);
-        tableView.setItems(observableProductos);
+        tablaProductos.setItems(observableProductos);
 
         columnId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         columnTitulo.setCellValueFactory(cellData -> cellData.getValue().tituloProperty());
