@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
-
 
 <AnchorPane fx:id="testBtn" maxHeight="540.0" maxWidth="1024.0" minHeight="540.0" minWidth="1024.0" prefHeight="540.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PantallaInicio">
    <children>
@@ -16,5 +16,6 @@
             <TableColumn fx:id="columnPrecio" editable="false" prefWidth="124.0" text="Precio" />
         </columns>
       </TableView>
+      <Button layoutX="46.0" layoutY="1.0" mnemonicParsing="false" onAction="#addProducts" text="Agregar producto" />
    </children>
 </AnchorPane>

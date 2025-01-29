@@ -15,7 +15,7 @@ public class ProductoDao {
 
     }
 
-    
+
     public List<Producto> getAllProductos(Connection conn) {
         String sql = "SELECT * FROM Producto";
         List<Producto> productos = new ArrayList<>();
@@ -38,7 +38,7 @@ public class ProductoDao {
 
     //! <---------- INSERT METHOD ---------->
     public void insertProduct(Connection conn, int id, String titulo, String categoria, int cantidad, double precio) {
-        String query = "INSERT INTO Product (id, titulo, categoria, cantidad, precio) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Producto (id, titulo, categoria, cantidad, precio) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setInt(1, id);
             statement.setString(2, titulo);
