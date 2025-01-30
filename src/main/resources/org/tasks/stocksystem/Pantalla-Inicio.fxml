@@ -7,7 +7,7 @@
 
 <AnchorPane fx:id="testBtn" maxHeight="540.0" maxWidth="1024.0" minHeight="540.0" minWidth="1024.0" prefHeight="540.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PantallaInicio">
    <children>
-      <TableView id="my-table" fx:id="tablaProductos" layoutX="46.0" layoutY="34.0" prefHeight="289.0" prefWidth="677.0" stylesheets="@styles.css">
+      <TableView id="my-table" fx:id="tablaProductos" layoutX="46.0" layoutY="58.0" prefHeight="289.0" prefWidth="677.0" stylesheets="@styles.css">
         <columns>
           <TableColumn fx:id="columnId" editable="false" prefWidth="135.0" resizable="false" text="ID" />
           <TableColumn fx:id="columnTitulo" editable="false" prefWidth="150.0" text="Titulo" />
@@ -16,6 +16,7 @@
             <TableColumn fx:id="columnPrecio" editable="false" prefWidth="124.0" text="Precio" />
         </columns>
       </TableView>
-      <Button layoutX="46.0" layoutY="1.0" mnemonicParsing="false" onAction="#addProducts" text="Agregar producto" />
+      <Button layoutX="46.0" layoutY="14.0" mnemonicParsing="false" onAction="#addProducts" text="Agregar producto" />
+      <Button layoutX="207.0" layoutY="14.0" mnemonicParsing="false" onAction="#deleteProducts" text="Eliminar producto (cuidado)" />
    </children>
 </AnchorPane>

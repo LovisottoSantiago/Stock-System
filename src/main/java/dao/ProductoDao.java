@@ -1,10 +1,13 @@
 package dao;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import modelo.Producto;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 
 import static conexion.DatabaseConnection.logger;
@@ -57,6 +60,51 @@ public class ProductoDao {
         }
     }
 
+
+    //! <---------- DELETE METHOD ---------->
+    public void deleteProduct(Connection conn, int id) {
+        String getTitleQuery = "SELECT titulo FROM Producto WHERE id = ?";
+        String deleteQuery = "DELETE FROM Producto WHERE id = ?";
+        String title = "";
+
+        try (PreparedStatement getTitleStatement = conn.prepareStatement(getTitleQuery)) {
+            getTitleStatement.setInt(1, id);
+            ResultSet rs = getTitleStatement.executeQuery();
+            if (rs.next()) {
+                title = rs.getString("titulo");
+            } else {
+                System.out.println("No se encontró un producto con ese ID.");
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación de eliminación");
+        alert.setHeaderText("Estás por eliminar el siguiente producto:");
+        alert.setContentText("ID: " + id + "\nTítulo: " + title + "\n\n¿Deseas continuar?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try (PreparedStatement deleteStatement = conn.prepareStatement(deleteQuery)) {
+                deleteStatement.setInt(1, id);
+
+                int rowsAffected = deleteStatement.executeUpdate();
+                if (rowsAffected > 0) {
+                    System.out.println("El producto fue eliminado correctamente.\n");
+                } else {
+                    System.out.println("No se encontró un producto con el ID especificado.\n");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Eliminación cancelada.\n");
+        }
+    }
 
 
 

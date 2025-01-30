@@ -42,7 +42,7 @@ public class PantallaInicio {
         showProducts();
     }
 
-    // Show products in the Table
+    
     public void showProducts(){
         List<Producto> productos = productoDao.getAllProductos(connection.getConnection(username, password));
 
@@ -57,34 +57,56 @@ public class PantallaInicio {
     }
 
     public void addProducts(){
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Nuevo Producto");
-        dialog.setHeaderText("Ingrese los datos del producto");
-
-        dialog.setContentText("ID:");
-        Optional<String> resultId = dialog.showAndWait();
+        TextInputDialog dialogId = new TextInputDialog();
+        dialogId.setTitle("Agregar Producto");
+        dialogId.setHeaderText(null);
+        dialogId.setContentText("ID:");
+        Optional<String> resultId = dialogId.showAndWait();
         int id = resultId.map(Integer::parseInt).orElseThrow(() -> new RuntimeException("ID no ingresado"));
 
-        dialog.setContentText("Título:");
-        Optional<String> resultTitulo = dialog.showAndWait();
+        TextInputDialog dialogTitulo = new TextInputDialog();
+        dialogTitulo.setTitle("Agregar Producto");
+        dialogTitulo.setHeaderText(null);
+        dialogTitulo.setContentText("Título:");
+        Optional<String> resultTitulo = dialogTitulo.showAndWait();
         String titulo = resultTitulo.orElse("");
 
-        dialog.setContentText("Categoría:");
-        Optional<String> resultCategoria = dialog.showAndWait();
+        TextInputDialog dialogCategoria = new TextInputDialog();
+        dialogCategoria.setTitle("Agregar Producto");
+        dialogCategoria.setHeaderText(null);
+        dialogCategoria.setContentText("Categoría:");
+        Optional<String> resultCategoria = dialogCategoria.showAndWait();
         String categoria = resultCategoria.orElse("");
 
-        dialog.setContentText("Cantidad:");
-        Optional<String> resultCantidad = dialog.showAndWait();
+        TextInputDialog dialogCantidad = new TextInputDialog();
+        dialogCantidad.setTitle("Agregar Producto");
+        dialogCantidad.setHeaderText(null);
+        dialogCantidad.setContentText("Cantidad:");
+        Optional<String> resultCantidad = dialogCantidad.showAndWait();
         int cantidad = resultCantidad.map(Integer::parseInt).orElse(0);
 
-        dialog.setContentText("Precio:");
-        Optional<String> resultPrecio = dialog.showAndWait();
+        TextInputDialog dialogPrecio = new TextInputDialog();
+        dialogPrecio.setTitle("Agregar Producto");
+        dialogPrecio.setHeaderText(null);
+        dialogPrecio.setContentText("Precio:");
+        Optional<String> resultPrecio = dialogPrecio.showAndWait();
         double precio = resultPrecio.map(Double::parseDouble).orElse(0.0);
 
         // Insert into database
         productoDao.insertProduct(connection.getConnection(username, password), id, titulo, categoria, cantidad, precio);
 
         // Refresh table
+        showProducts();
+    }
+
+    public void deleteProducts(){
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Eliminar producto de la base de datos");
+        dialog.setHeaderText("Ingrese los datos del producto");
+        dialog.setContentText("ID:");
+        Optional<String> resultId = dialog.showAndWait();
+        int id = resultId.map(Integer::parseInt).orElseThrow(() -> new RuntimeException("ID no ingresado"));
+        productoDao.deleteProduct(connection.getConnection(username, password), id);
         showProducts();
     }
 
