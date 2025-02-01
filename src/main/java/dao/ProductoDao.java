@@ -19,6 +19,7 @@ public class ProductoDao {
     }
 
 
+    //! <---------- GET ALL PRODUCTS ---------->
     public List<Producto> getAllProductos(Connection conn) {
         String sql = "SELECT id, titulo, categoria, cantidad, precio, imagen_url FROM Producto";
         List<Producto> productos = new ArrayList<>();
@@ -38,7 +39,6 @@ public class ProductoDao {
         }
         return productos;
     }
-
 
 
     //! <---------- INSERT METHOD ---------->
@@ -110,6 +110,29 @@ public class ProductoDao {
     }
 
 
+    //! <---------- UPDATE METHOD ---------->
+    public void updateProduct(Connection conn, int id, String titulo, String categoria, int cantidad, double precio, String imagen_url) {
+        String sql = "UPDATE Producto SET titulo = ?, categoria = ?, cantidad = ?, precio = ?, imagen_url = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, titulo);
+            stmt.setString(2, categoria);
+            stmt.setInt(3, cantidad);
+            stmt.setDouble(4, precio);
+            stmt.setString(5, imagen_url);
+            stmt.setInt(6, id);
+
+            int rowsUpdated = stmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                System.out.println("Producto actualizado correctamente.");
+            } else {
+                System.out.println("No se encontró un producto con el ID especificado.");
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al actualizar el producto", e);
+        }
+    }
 
 
 }

@@ -113,9 +113,69 @@ public class PantallaInicio {
         dialog.setContentText("ID:");
         Optional<String> resultId = dialog.showAndWait();
         int id = resultId.map(Integer::parseInt).orElseThrow(() -> new RuntimeException("ID no ingresado"));
+
         productoDao.deleteProduct(connection.getConnection(username, password), id);
+
+        // Refresh table
         showProducts();
     }
 
+    public void updateProducts(){
+        TextInputDialog dialogId = new TextInputDialog();
+        dialogId.setTitle("Editar Producto");
+        dialogId.setHeaderText(null);
+        dialogId.setContentText("ID del producto a modificar:");
+        Optional<String> resultId = dialogId.showAndWait();
+        if (resultId.isEmpty()) return;
+
+        int id = Integer.parseInt(resultId.get());
+        Producto producto = null;
+        for (Producto p : tablaProductos.getItems()) {
+            if (p.getId() == id) {
+                producto = p;
+                break;
+            }
+        }
+
+        if (producto == null) {
+            System.out.println("No se encontró un producto con ese ID.");
+            return;
+        }
+
+        TextInputDialog dialogTitulo = new TextInputDialog(producto.getTitulo());
+        dialogTitulo.setTitle("Editar Producto");
+        dialogTitulo.setHeaderText(null);
+        dialogTitulo.setContentText("Nuevo Título:");
+        String titulo = dialogTitulo.showAndWait().orElse(producto.getTitulo());
+
+        TextInputDialog dialogCategoria = new TextInputDialog(producto.getCategoria());
+        dialogCategoria.setTitle("Editar Producto");
+        dialogCategoria.setHeaderText(null);
+        dialogCategoria.setContentText("Nueva Categoría:");
+        String categoria = dialogCategoria.showAndWait().orElse(producto.getCategoria());
+
+        TextInputDialog dialogCantidad = new TextInputDialog(String.valueOf(producto.getCantidad()));
+        dialogCantidad.setTitle("Editar Producto");
+        dialogCantidad.setHeaderText(null);
+        dialogCantidad.setContentText("Nueva Cantidad:");
+        int cantidad = Integer.parseInt(dialogCantidad.showAndWait().orElse(String.valueOf(producto.getCantidad())));
+
+        TextInputDialog dialogPrecio = new TextInputDialog(String.valueOf(producto.getPrecio()));
+        dialogPrecio.setTitle("Editar Producto");
+        dialogPrecio.setHeaderText(null);
+        dialogPrecio.setContentText("Nuevo Precio:");
+        double precio = Double.parseDouble(dialogPrecio.showAndWait().orElse(String.valueOf(producto.getPrecio())));
+
+        TextInputDialog dialogImagen = new TextInputDialog(producto.getImagenUrl());
+        dialogImagen.setTitle("Editar Producto");
+        dialogImagen.setHeaderText(null);
+        dialogImagen.setContentText("Nueva URL de Imagen:");
+        String imagen_url = dialogImagen.showAndWait().orElse(producto.getImagenUrl());
+
+        productoDao.updateProduct(connection.getConnection(username, password), id, titulo, categoria, cantidad, precio, imagen_url);
+
+        // Refresh table
+        showProducts();
+    }
 
 }

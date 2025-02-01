@@ -18,5 +18,6 @@
       </TableView>
       <Button layoutX="46.0" layoutY="14.0" mnemonicParsing="false" onAction="#addProducts" text="Agregar producto" />
       <Button layoutX="207.0" layoutY="14.0" mnemonicParsing="false" onAction="#deleteProducts" text="Eliminar producto (cuidado)" />
+      <Button layoutX="427.0" layoutY="14.0" mnemonicParsing="false" onAction="#updateProducts" text="Modificar producto" />
    </children>
 </AnchorPane>
