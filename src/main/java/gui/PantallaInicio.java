@@ -1,6 +1,7 @@
 package gui;
 
 import conexion.DatabaseConnection;
+import dao.FacturaDao;
 import dao.ProductoDao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,13 +9,17 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
+import modelo.DetalleFactura;
+import modelo.Factura;
 import modelo.Producto;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
 public class PantallaInicio {
 
+    // Productos
     @FXML
     private TableView<Producto> tablaProductos;
     @FXML
@@ -28,10 +33,25 @@ public class PantallaInicio {
     @FXML
     private TableColumn<Producto, Double> columnPrecio;
 
+
+    // Factura
+    @FXML
+    private  TableView<Factura> tablaFacturas;
+    @FXML
+    private TableColumn<Factura, Integer> facturaId;
+    @FXML
+    private TableColumn<Factura, Timestamp> facturaFecha;
+    @FXML
+    private TableColumn<Factura, Double> facturaMonto;
+    @FXML
+    private TableColumn<Factura, String> facturaTipo;
+
+
     private DatabaseConnection connection;
     private String username;
     private String password;
     private final ProductoDao productoDao = new ProductoDao();
+    private final FacturaDao facturaDao = new FacturaDao();
 
     public void initData(DatabaseConnection connection, String username, String password) {
         this.connection = connection;
@@ -40,10 +60,11 @@ public class PantallaInicio {
         System.out.println("Conexión establecida: " + connection);
 
         showProducts();
+        showFacturas();
     }
 
 
-    //! <---------- PRODUCTS ---------->
+    //! <---------- PRODUCTOS ---------->
     public void showProducts(){
         List<Producto> productos = productoDao.getAllProductos(connection.getConnection(username, password));
 
@@ -178,6 +199,24 @@ public class PantallaInicio {
         // Refresh table
         showProducts();
     }
+
+
+    //! <---------- FACTURAS ---------->
+    public void showFacturas(){
+        List<Factura> facturas = facturaDao.getAllProductos(connection.getConnection(username, password));
+
+        ObservableList<Factura> observableFacturas = FXCollections.observableArrayList(facturas);
+        tablaFacturas.setItems(observableFacturas);
+
+        facturaId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
+        facturaFecha.setCellValueFactory(cellData -> (javafx.beans.value.ObservableValue<Timestamp>) cellData.getValue().fechaProperty());
+        facturaMonto.setCellValueFactory(cellData -> cellData.getValue().montoFinalProperty().asObject());
+        facturaTipo.setCellValueFactory(cellData -> cellData.getValue().tipoProperty());
+    }
+
+
+
+
 
 
 

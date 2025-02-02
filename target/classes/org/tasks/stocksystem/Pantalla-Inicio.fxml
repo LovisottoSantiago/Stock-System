@@ -9,7 +9,7 @@
 
 <AnchorPane fx:id="testBtn" maxHeight="577.0" maxWidth="1116.0" minHeight="540.0" minWidth="1024.0" prefHeight="577.0" prefWidth="1116.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PantallaInicio">
    <children>
-      <TableView id="my-table" fx:id="tablaProductos" layoutX="46.0" layoutY="58.0" prefHeight="280.0" prefWidth="684.0" stylesheets="@styles.css">
+      <TableView id="tablaProductos" fx:id="tablaProductos" layoutX="46.0" layoutY="58.0" prefHeight="280.0" prefWidth="684.0" stylesheets="@styles.css">
         <columns>
           <TableColumn fx:id="columnId" editable="false" prefWidth="135.0" resizable="false" text="ID" />
           <TableColumn fx:id="columnTitulo" editable="false" prefWidth="171.0" text="Titulo" />
@@ -21,7 +21,7 @@
       <Button layoutX="46.0" layoutY="14.0" mnemonicParsing="false" onAction="#addProducts" text="Agregar producto" />
       <Button layoutX="354.0" layoutY="14.0" mnemonicParsing="false" onAction="#deleteProducts" text="Eliminar producto (cuidado)" />
       <Button layoutX="194.0" layoutY="14.0" mnemonicParsing="false" onAction="#updateProducts" text="Modificar producto" />
-      <TableView fx:id="tablaCarrito" layoutX="762.0" layoutY="58.0" prefHeight="210.0" prefWidth="320.0" stylesheets="@styles.css">
+      <TableView id="tablaDetalleFacturas" fx:id="tablaCarrito" layoutX="762.0" layoutY="58.0" prefHeight="210.0" prefWidth="320.0" stylesheets="@styles.css">
         <columns>
           <TableColumn prefWidth="75.0" text="Producto" />
           <TableColumn prefWidth="83.0" text="Cantidad" />
@@ -34,12 +34,12 @@
             <Font name="Poppins Black" size="24.0" />
          </font>
       </Label>
-      <TableView fx:id="tablaFacturas" layoutX="46.0" layoutY="359.0" prefHeight="148.0" prefWidth="684.0" stylesheets="@styles.css">
+      <TableView id="my-table" fx:id="tablaFacturas" layoutX="46.0" layoutY="359.0" prefHeight="148.0" prefWidth="684.0" stylesheets="@styles.css">
         <columns>
-          <TableColumn prefWidth="134.0" text="ID" />
-          <TableColumn prefWidth="306.0" text="Fecha" />
-            <TableColumn prefWidth="131.0" text="Monto" />
-            <TableColumn prefWidth="112.0" text="Tipo" />
+          <TableColumn fx:id="facturaId" prefWidth="134.0" text="ID" />
+          <TableColumn fx:id="facturaFecha" prefWidth="306.0" text="Fecha" />
+            <TableColumn fx:id="facturaMonto" prefWidth="131.0" text="Monto" />
+            <TableColumn fx:id="facturaTipo" prefWidth="112.0" text="Tipo" />
         </columns>
       </TableView>
       <Label layoutX="762.0" layoutY="277.0" text="TOTAL: $999">

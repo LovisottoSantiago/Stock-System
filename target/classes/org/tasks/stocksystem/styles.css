@@ -1,4 +1,4 @@
-#my-table .table-cell {
+#tablaProductos .table-cell {
     -fx-alignment: CENTER;
 
     -fx-background-color: transparent;
@@ -8,3 +8,22 @@
     -fx-text-fill: -fx-text-inner-color;
 }
 
+#tablaFacturas .table-cell {
+    -fx-alignment: CENTER;
+
+    -fx-background-color: transparent;
+    -fx-border-color: transparent -fx-table-cell-border-color transparent transparent;
+    -fx-border-width: 0.083333em;
+    -fx-cell-size: 2.0em;
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+#tablaDetalleFacturas .table-cell {
+    -fx-alignment: CENTER;
+
+    -fx-background-color: transparent;
+    -fx-border-color: transparent -fx-table-cell-border-color transparent transparent;
+    -fx-border-width: 0.083333em;
+    -fx-cell-size: 2.0em;
+    -fx-text-fill: -fx-text-inner-color;
+}
