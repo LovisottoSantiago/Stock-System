@@ -42,7 +42,8 @@ public class PantallaInicio {
         showProducts();
     }
 
-    
+
+    //! <---------- PRODUCTS ---------->
     public void showProducts(){
         List<Producto> productos = productoDao.getAllProductos(connection.getConnection(username, password));
 
@@ -177,5 +178,7 @@ public class PantallaInicio {
         // Refresh table
         showProducts();
     }
+
+
 
 }

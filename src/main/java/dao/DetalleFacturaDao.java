@@ -38,7 +38,7 @@ public class DetalleFacturaDao {
 
                 DetalleFactura detalle = new DetalleFactura(
                         rs.getInt("id"),
-                        producto,
+                        rs.getString("producto"),
                         rs.getInt("cantidad"),
                         rs.getDouble("precioUnitario"),
                         rs.getDouble("subTotal")
