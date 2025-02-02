@@ -92,8 +92,15 @@ public class PantallaInicio {
         Optional<String> resultPrecio = dialogPrecio.showAndWait();
         double precio = resultPrecio.map(Double::parseDouble).orElse(0.0);
 
+        TextInputDialog dialogImagen = new TextInputDialog();
+        dialogImagen.setTitle("Agregar Imagen");
+        dialogImagen.setHeaderText(null);
+        dialogImagen.setContentText("Imagen:");
+        Optional<String> resultImagen = dialogImagen.showAndWait();
+        String imagen_url = resultImagen.orElse("");
+
         // Insert into database
-        productoDao.insertProduct(connection.getConnection(username, password), id, titulo, categoria, cantidad, precio);
+        productoDao.insertProduct(connection.getConnection(username, password), id, titulo, categoria, cantidad, precio, imagen_url);
 
         // Refresh table
         showProducts();

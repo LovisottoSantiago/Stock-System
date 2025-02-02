@@ -20,7 +20,7 @@ public class ProductoDao {
 
 
     public List<Producto> getAllProductos(Connection conn) {
-        String sql = "SELECT * FROM Producto";
+        String sql = "SELECT id, titulo, categoria, cantidad, precio, imagen_url FROM Producto";
         List<Producto> productos = new ArrayList<>();
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -29,25 +29,28 @@ public class ProductoDao {
                         rs.getString("titulo"),
                         rs.getString("categoria"),
                         rs.getInt("cantidad"),
-                        rs.getDouble("precio")
+                        rs.getDouble("precio"),
+                        rs.getString("imagen_url")
                 ));
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error trying to show items in the database");
+            logger.log(Level.SEVERE, "Error trying to show items in the database", e);
         }
         return productos;
     }
 
 
+
     //! <---------- INSERT METHOD ---------->
-    public void insertProduct(Connection conn, int id, String titulo, String categoria, int cantidad, double precio) {
-        String query = "INSERT INTO Producto (id, titulo, categoria, cantidad, precio) VALUES (?, ?, ?, ?, ?)";
+    public void insertProduct(Connection conn, int id, String titulo, String categoria, int cantidad, double precio, String imagen_url) {
+        String query = "INSERT INTO Producto (id, titulo, categoria, cantidad, precio, imagen_url) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setInt(1, id);
             statement.setString(2, titulo);
             statement.setString(3, categoria);
             statement.setInt(4, cantidad);
             statement.setDouble(5, precio);
+            statement.setString(6, imagen_url);
 
             int rowsInserted = statement.executeUpdate();
 

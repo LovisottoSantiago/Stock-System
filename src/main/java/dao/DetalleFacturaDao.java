@@ -32,7 +32,8 @@ public class DetalleFacturaDao {
                         rs.getString("titulo"),
                         null,
                         0,
-                        0.0
+                        0.0,
+                        null
                 );
 
                 DetalleFactura detalle = new DetalleFactura(
