@@ -52,6 +52,8 @@ public class PantallaInicio {
     @FXML
     private  TableView<DetalleFactura> tablaCarrito;
     @FXML
+    private TableColumn<DetalleFactura, Integer> carritoId;
+    @FXML
     private TableColumn<DetalleFactura, String> carritoProducto;
     @FXML
     private TableColumn<DetalleFactura, Integer> carritoCantidad;
@@ -238,15 +240,53 @@ public class PantallaInicio {
         ObservableList<DetalleFactura> observableDetalleFacturas = FXCollections.observableArrayList(detalleFacturas);
         tablaCarrito.setItems(observableDetalleFacturas);
 
+        carritoId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         carritoProducto.setCellValueFactory(cellData -> cellData.getValue().productoProperty());
         carritoCantidad.setCellValueFactory(cellData -> cellData.getValue().cantidadProperty().asObject());
         carritoPrecio.setCellValueFactory(cellData -> cellData.getValue().precioUnitarioProperty().asObject());
         carritoMonto.setCellValueFactory(cellData -> cellData.getValue().subTotalProperty().asObject());
     }
 
+    public void addProductsCarrito(){
+        TextInputDialog dialogId = new TextInputDialog();
+        dialogId.setTitle("Agregar Producto");
+        dialogId.setHeaderText(null);
+        dialogId.setContentText("ID:");
+        Optional<String> resultId = dialogId.showAndWait();
+        int id = resultId.map(Integer::parseInt).orElseThrow(() -> new RuntimeException("ID no ingresado"));
 
+        TextInputDialog dialogCantidad = new TextInputDialog();
+        dialogCantidad.setTitle("Agregar Producto");
+        dialogCantidad.setHeaderText(null);
+        dialogCantidad.setContentText("Cantidad:");
+        Optional<String> resultCantidad = dialogCantidad.showAndWait();
+        int cantidad = resultCantidad.map(Integer::parseInt).orElse(0);
 
+        detalleFacturaDao.addProductoCarrito(connection.getConnection(username, password), id, cantidad );
 
+        // Refresh table
+        showCarrito();
+    }
+
+    public void deleteProductsCarrito(){
+        TextInputDialog dialogId = new TextInputDialog();
+        dialogId.setTitle("Eliminar Producto");
+        dialogId.setHeaderText(null);
+        dialogId.setContentText("ID:");
+        Optional<String> resultId = dialogId.showAndWait();
+        int id = resultId.map(Integer::parseInt).orElseThrow(() -> new RuntimeException("ID no ingresado"));
+
+        detalleFacturaDao.deleteProductoCarrito(connection.getConnection(username, password), id);
+        showCarrito();
+    }
+
+    public void pagoTransferencia(){
+        detalleFacturaDao.generarFactura(connection.getConnection(username, password), "Transferencia");
+    }
+
+    public void pagoEfectivo(){
+        detalleFacturaDao.generarFactura(connection.getConnection(username, password), "Efectivo");
+    }
 
 
 }

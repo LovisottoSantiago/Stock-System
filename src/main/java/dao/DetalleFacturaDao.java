@@ -37,7 +37,7 @@ public class DetalleFacturaDao {
                 );
 
                 DetalleFactura detalle = new DetalleFactura(
-                        rs.getInt("id"),
+                        rs.getInt("producto_id"),
                         rs.getString("producto"),
                         rs.getInt("cantidad"),
                         rs.getDouble("precioUnitario"),
@@ -67,7 +67,7 @@ public class DetalleFacturaDao {
 
             while (rs.next()) {
                 DetalleFactura detalle = new DetalleFactura(
-                        rs.getInt("id"),
+                        rs.getInt("producto_id"),
                         rs.getString("titulo"),
                         rs.getInt("cantidad"),
                         rs.getDouble("precioUnitario"),
@@ -83,24 +83,38 @@ public class DetalleFacturaDao {
     }
 
 
-    public void addProductoCarrito(Connection conn, int productoId, int cantidad, double precioUnitario) {
-        String sql = "INSERT INTO DetalleFactura (producto_id, cantidad, precioUnitario, subTotal, factura_id) " +
+    public void addProductoCarrito(Connection conn, int productoId, int cantidad) {
+        String obtenerPrecioSql = "SELECT precio FROM Producto WHERE id = ?";
+        String insertarSql = "INSERT INTO DetalleFactura (producto_id, cantidad, precioUnitario, subTotal, factura_id) " +
                 "VALUES (?, ?, ?, ?, NULL)";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, productoId);
-            stmt.setInt(2, cantidad);
-            stmt.setDouble(3, precioUnitario);
-            stmt.setDouble(4, cantidad * precioUnitario);  // Subtotal = cantidad * precio
-            stmt.executeUpdate();
+        try (PreparedStatement obtenerPrecioStmt = conn.prepareStatement(obtenerPrecioSql)) {
+            obtenerPrecioStmt.setInt(1, productoId);
+            ResultSet rs = obtenerPrecioStmt.executeQuery();
+
+            if (rs.next()) {
+                double precioUnitario = rs.getDouble("precio");
+                double subTotal = cantidad * precioUnitario;
+
+                try (PreparedStatement insertarStmt = conn.prepareStatement(insertarSql)) {
+                    insertarStmt.setInt(1, productoId);
+                    insertarStmt.setInt(2, cantidad);
+                    insertarStmt.setDouble(3, precioUnitario);
+                    insertarStmt.setDouble(4, subTotal);
+                    insertarStmt.executeUpdate();
+                }
+            } else {
+                System.out.println("No se encontró el producto con ID: " + productoId);
+            }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al agregar producto al carrito", e);
         }
     }
 
 
+
     public void deleteProductoCarrito(Connection conn, int detalleId) {
-        String sql = "DELETE FROM DetalleFactura WHERE id = ? AND factura_id IS NULL";
+        String sql = "DELETE FROM DetalleFactura WHERE producto_id = ? AND factura_id IS NULL";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, detalleId);

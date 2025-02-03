@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="testBtn" maxHeight="577.0" maxWidth="1116.0" minHeight="540.0" minWidth="1024.0" prefHeight="577.0" prefWidth="1116.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PantallaInicio">
+<AnchorPane fx:id="testBtn" maxHeight="577.0" maxWidth="1199.0" minHeight="540.0" minWidth="1024.0" prefHeight="577.0" prefWidth="1199.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PantallaInicio">
    <children>
       <TableView id="tablaProductos" fx:id="tablaProductos" layoutX="46.0" layoutY="58.0" prefHeight="280.0" prefWidth="684.0" stylesheets="@styles.css">
         <columns>
@@ -21,15 +21,16 @@
       <Button layoutX="46.0" layoutY="14.0" mnemonicParsing="false" onAction="#addProducts" text="Agregar producto" />
       <Button layoutX="354.0" layoutY="14.0" mnemonicParsing="false" onAction="#deleteProducts" text="Eliminar producto (cuidado)" />
       <Button layoutX="194.0" layoutY="14.0" mnemonicParsing="false" onAction="#updateProducts" text="Modificar producto" />
-      <TableView id="tablaCarrito" fx:id="tablaCarrito" layoutX="762.0" layoutY="58.0" prefHeight="210.0" prefWidth="320.0" stylesheets="@styles.css">
+      <TableView id="tablaCarrito" fx:id="tablaCarrito" layoutX="762.0" layoutY="58.0" prefHeight="210.0" prefWidth="419.0" stylesheets="@styles.css">
         <columns>
-          <TableColumn fx:id="carritoProducto" prefWidth="75.0" text="Producto" />
-          <TableColumn fx:id="carritoCantidad" prefWidth="83.0" text="Cantidad" />
-            <TableColumn fx:id="carritoPrecio" prefWidth="67.0" text="Precio" />
-            <TableColumn fx:id="carritoMonto" prefWidth="75.0" text="Monto" />
+            <TableColumn fx:id="carritoId" prefWidth="75.0" text="ID" />
+          <TableColumn fx:id="carritoProducto" prefWidth="119.0" text="Producto" />
+          <TableColumn fx:id="carritoCantidad" prefWidth="71.0" text="Cantidad" />
+            <TableColumn fx:id="carritoPrecio" prefWidth="79.0" text="Precio" />
+            <TableColumn fx:id="carritoMonto" prefWidth="78.0" text="Monto" />
         </columns>
       </TableView>
-      <Label layoutX="784.0" layoutY="14.0" text="CARRITO DE COMPRAS">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="759.0" layoutY="14.0" prefHeight="35.0" prefWidth="419.0" text="CARRITO DE COMPRAS" textAlignment="CENTER">
          <font>
             <Font name="Poppins Black" size="24.0" />
          </font>
@@ -42,12 +43,14 @@
             <TableColumn fx:id="facturaTipo" prefWidth="112.0" text="Tipo" />
         </columns>
       </TableView>
-      <Label layoutX="762.0" layoutY="277.0" text="TOTAL: $999">
+      <Label layoutX="762.0" layoutY="271.0" text="TOTAL: $999">
          <font>
             <Font name="Poppins Black" size="24.0" />
          </font>
       </Label>
-      <Button layoutX="762.0" layoutY="325.0" mnemonicParsing="false" text="Agregar producto al carrito" />
-      <Button layoutX="964.0" layoutY="325.0" mnemonicParsing="false" text="Eliminar producto" />
+      <Button layoutX="993.0" layoutY="282.0" mnemonicParsing="false" onAction="#addProductsCarrito" text="Agregar producto al carrito" />
+      <Button layoutX="993.0" layoutY="312.0" mnemonicParsing="false" onAction="#deleteProductsCarrito" prefHeight="26.0" prefWidth="185.0" text="Eliminar producto" />
+      <Button layoutX="837.0" layoutY="312.0" mnemonicParsing="false" onAction="#pagoTransferencia" text="Transferencia" />
+      <Button layoutX="762.0" layoutY="312.0" mnemonicParsing="false" onAction="#pagoEfectivo" text="Efectivo" />
    </children>
 </AnchorPane>
