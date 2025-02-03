@@ -37,13 +37,13 @@
       </Label>
       <TableView id="tablaFacturas" fx:id="tablaFacturas" layoutX="46.0" layoutY="359.0" prefHeight="148.0" prefWidth="684.0" stylesheets="@styles.css">
         <columns>
-          <TableColumn fx:id="facturaId" prefWidth="134.0" text="ID" />
-          <TableColumn fx:id="facturaFecha" prefWidth="306.0" text="Fecha" />
-            <TableColumn fx:id="facturaMonto" prefWidth="131.0" text="Monto" />
-            <TableColumn fx:id="facturaTipo" prefWidth="112.0" text="Tipo" />
+          <TableColumn fx:id="facturaId" prefWidth="98.0" text="ID" />
+          <TableColumn fx:id="facturaFecha" prefWidth="215.0" text="Fecha" />
+            <TableColumn fx:id="facturaMonto" prefWidth="202.0" text="Monto" />
+            <TableColumn fx:id="facturaTipo" prefWidth="148.0" text="Tipo" />
         </columns>
       </TableView>
-      <Label layoutX="762.0" layoutY="271.0" text="TOTAL: $999">
+      <Label fx:id="totalLabel" layoutX="762.0" layoutY="271.0">
          <font>
             <Font name="Poppins Black" size="24.0" />
          </font>

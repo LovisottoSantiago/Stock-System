@@ -5,16 +5,22 @@ import dao.DetalleFacturaDao;
 import dao.FacturaDao;
 import dao.ProductoDao;
 import javafx.collections.FXCollections;
+import java.text.DecimalFormat;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import modelo.DetalleFactura;
 import modelo.Factura;
+import javafx.util.Callback;
+import javafx.scene.control.TableCell;
+import java.text.SimpleDateFormat;
 import modelo.Producto;
 
 import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,7 +67,8 @@ public class PantallaInicio {
     private TableColumn<DetalleFactura, Double> carritoPrecio;
     @FXML
     private TableColumn<DetalleFactura, Double> carritoMonto;
-
+    @FXML
+    private Label totalLabel;
 
     private DatabaseConnection connection;
     private String username;
@@ -76,9 +83,7 @@ public class PantallaInicio {
         this.password = password;
         System.out.println("Conexión establecida: " + connection);
 
-        showProducts();
-        showFacturas();
-        showCarrito();
+        actualizarTodo();
     }
 
 
@@ -87,7 +92,9 @@ public class PantallaInicio {
         List<Producto> productos = productoDao.getAllProductos(connection.getConnection(username, password));
 
         ObservableList<Producto> observableProductos = FXCollections.observableArrayList(productos);
+        observableProductos.sort(Comparator.comparing(Producto::getId));
         tablaProductos.setItems(observableProductos);
+
 
         columnId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         columnTitulo.setCellValueFactory(cellData -> cellData.getValue().tituloProperty());
@@ -224,10 +231,31 @@ public class PantallaInicio {
         List<Factura> facturas = facturaDao.getAllProductos(connection.getConnection(username, password));
 
         ObservableList<Factura> observableFacturas = FXCollections.observableArrayList(facturas);
+        observableFacturas.sort((df1, df2) -> Integer.compare(df2.getId(), df1.getId()));
         tablaFacturas.setItems(observableFacturas);
 
         facturaId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
-        facturaFecha.setCellValueFactory(cellData -> (javafx.beans.value.ObservableValue<Timestamp>) cellData.getValue().fechaProperty());
+
+        // Usar un CellFactory para formatear la fecha
+        facturaFecha.setCellValueFactory(cellData -> cellData.getValue().fechaProperty());
+        facturaFecha.setCellFactory(new Callback<TableColumn<Factura, Timestamp>, TableCell<Factura, Timestamp>>() {
+            @Override
+            public TableCell<Factura, Timestamp> call(TableColumn<Factura, Timestamp> param) {
+                return new TableCell<Factura, Timestamp>() {
+                    @Override
+                    protected void updateItem(Timestamp item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item != null) {
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd / HH:mm:ss");
+                            setText(sdf.format(item));
+                        } else {
+                            setText(null);
+                        }
+                    }
+                };
+            }
+        });
+
         facturaMonto.setCellValueFactory(cellData -> cellData.getValue().montoFinalProperty().asObject());
         facturaTipo.setCellValueFactory(cellData -> cellData.getValue().tipoProperty());
     }
@@ -240,7 +268,7 @@ public class PantallaInicio {
         ObservableList<DetalleFactura> observableDetalleFacturas = FXCollections.observableArrayList(detalleFacturas);
         tablaCarrito.setItems(observableDetalleFacturas);
 
-        carritoId.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
+        carritoId.setCellValueFactory(cellData -> cellData.getValue().productoIdProperty().asObject());
         carritoProducto.setCellValueFactory(cellData -> cellData.getValue().productoProperty());
         carritoCantidad.setCellValueFactory(cellData -> cellData.getValue().cantidadProperty().asObject());
         carritoPrecio.setCellValueFactory(cellData -> cellData.getValue().precioUnitarioProperty().asObject());
@@ -263,7 +291,10 @@ public class PantallaInicio {
         int cantidad = resultCantidad.map(Integer::parseInt).orElse(0);
 
         detalleFacturaDao.addProductoCarrito(connection.getConnection(username, password), id, cantidad );
-
+        double valor = detalleFacturaDao.obtenerMontoTotalCarrito(connection.getConnection(username, password));
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        String valorFormateado = decimalFormat.format(valor);
+        totalLabel.setText("Total: " + valorFormateado);
         // Refresh table
         showCarrito();
     }
@@ -282,10 +313,20 @@ public class PantallaInicio {
 
     public void pagoTransferencia(){
         detalleFacturaDao.generarFactura(connection.getConnection(username, password), "Transferencia");
+        actualizarTodo();
     }
 
     public void pagoEfectivo(){
         detalleFacturaDao.generarFactura(connection.getConnection(username, password), "Efectivo");
+        actualizarTodo();
+    }
+
+
+    public void actualizarTodo(){
+        showProducts();
+        showFacturas();
+        showCarrito();
+        totalLabel.setText("Total: 0");
     }
 
 

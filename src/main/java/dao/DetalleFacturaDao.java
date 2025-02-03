@@ -37,6 +37,7 @@ public class DetalleFacturaDao {
                 );
 
                 DetalleFactura detalle = new DetalleFactura(
+                        rs.getInt("id"),
                         rs.getInt("producto_id"),
                         rs.getString("producto"),
                         rs.getInt("cantidad"),
@@ -67,6 +68,7 @@ public class DetalleFacturaDao {
 
             while (rs.next()) {
                 DetalleFactura detalle = new DetalleFactura(
+                        rs.getInt("id"),
                         rs.getInt("producto_id"),
                         rs.getString("titulo"),
                         rs.getInt("cantidad"),
@@ -84,24 +86,29 @@ public class DetalleFacturaDao {
 
 
     public void addProductoCarrito(Connection conn, int productoId, int cantidad) {
-        String obtenerPrecioSql = "SELECT precio FROM Producto WHERE id = ?";
-        String insertarSql = "INSERT INTO DetalleFactura (producto_id, cantidad, precioUnitario, subTotal, factura_id) " +
-                "VALUES (?, ?, ?, ?, NULL)";
+        String obtenerPrecioSql = "SELECT precio, cantidad FROM Producto WHERE id = ?";
+        String insertarSql = "INSERT INTO DetalleFactura (producto_id, cantidad, precioUnitario, subTotal, factura_id) VALUES (?, ?, ?, ?, NULL)";
 
         try (PreparedStatement obtenerPrecioStmt = conn.prepareStatement(obtenerPrecioSql)) {
             obtenerPrecioStmt.setInt(1, productoId);
             ResultSet rs = obtenerPrecioStmt.executeQuery();
 
             if (rs.next()) {
-                double precioUnitario = rs.getDouble("precio");
-                double subTotal = cantidad * precioUnitario;
+                int cantidadDisponible = rs.getInt("cantidad");
+                if (cantidadDisponible >= cantidad) {
+                    double precioUnitario = rs.getDouble("precio");
+                    double subTotal = cantidad * precioUnitario;
 
-                try (PreparedStatement insertarStmt = conn.prepareStatement(insertarSql)) {
-                    insertarStmt.setInt(1, productoId);
-                    insertarStmt.setInt(2, cantidad);
-                    insertarStmt.setDouble(3, precioUnitario);
-                    insertarStmt.setDouble(4, subTotal);
-                    insertarStmt.executeUpdate();
+                    try (PreparedStatement insertarStmt = conn.prepareStatement(insertarSql)) {
+                        insertarStmt.setInt(1, productoId);
+                        insertarStmt.setInt(2, cantidad);
+                        insertarStmt.setDouble(3, precioUnitario);
+                        insertarStmt.setDouble(4, subTotal);
+                        insertarStmt.executeUpdate();
+                    }
+                    updateProductQuantity(conn, productoId, cantidad);
+                } else {
+                    System.out.println("No hay suficiente stock disponible para el producto ID: " + productoId);
                 }
             } else {
                 System.out.println("No se encontró el producto con ID: " + productoId);
@@ -111,6 +118,24 @@ public class DetalleFacturaDao {
         }
     }
 
+    public void updateProductQuantity(Connection conn, int id, int cantidad) {
+        String sql = "UPDATE Producto SET cantidad = cantidad - ? WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, cantidad);
+            stmt.setInt(2, id);
+
+            int rowsUpdated = stmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                System.out.println("Cantidad del producto actualizada correctamente.");
+            } else {
+                System.out.println("No se encontró un producto con el ID especificado.");
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al actualizar la cantidad del producto", e);
+        }
+    }
 
 
     public void deleteProductoCarrito(Connection conn, int detalleId) {
@@ -141,7 +166,7 @@ public class DetalleFacturaDao {
     // 2. Asignar el factura_id generado a todos los productos del carrito.
 
     public void generarFactura(Connection conn, String tipoPago){
-        String insertFacturaSQL = "INSERT INTO Factura (fecha, montoFinal, tipoPago) VALUES (NOW(), ?, ?)";
+        String insertFacturaSQL = "INSERT INTO Factura (fecha, montoFinal, tipo) VALUES (NOW(), ?, ?)";
         String updateDetallesSQL = "UPDATE DetalleFactura SET factura_id = ? WHERE factura_id IS NULL";
 
         try (PreparedStatement insertFacturaStmt = conn.prepareStatement(insertFacturaSQL, Statement.RETURN_GENERATED_KEYS);
@@ -168,5 +193,27 @@ public class DetalleFacturaDao {
             logger.log(Level.SEVERE, "Error al generar la factura", e);
         }
     }
+
+
+    public double obtenerMontoTotalCarrito(Connection conn) {
+        String sql = "SELECT SUM(df.subTotal) AS montoTotal " +
+                "FROM DetalleFactura df " +
+                "WHERE df.factura_id IS NULL"; // Solo los productos del carrito (sin factura asignada)
+
+        double montoTotal = 0.0;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                montoTotal = rs.getDouble("montoTotal");
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al obtener el monto total del carrito", e);
+        }
+
+        return montoTotal;
+    }
+
 
 }
