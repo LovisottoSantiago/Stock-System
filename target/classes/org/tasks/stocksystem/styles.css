@@ -18,7 +18,7 @@
     -fx-text-fill: -fx-text-inner-color;
 }
 
-#tablaDetalleFacturas .table-cell {
+#tablaCarrito .table-cell {
     -fx-alignment: CENTER;
 
     -fx-background-color: transparent;

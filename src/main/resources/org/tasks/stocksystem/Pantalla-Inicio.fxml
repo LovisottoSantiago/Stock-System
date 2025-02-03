@@ -23,10 +23,10 @@
       <Button layoutX="194.0" layoutY="14.0" mnemonicParsing="false" onAction="#updateProducts" text="Modificar producto" />
       <TableView id="tablaCarrito" fx:id="tablaCarrito" layoutX="762.0" layoutY="58.0" prefHeight="210.0" prefWidth="320.0" stylesheets="@styles.css">
         <columns>
-          <TableColumn prefWidth="75.0" text="Producto" />
-          <TableColumn prefWidth="83.0" text="Cantidad" />
-            <TableColumn prefWidth="67.0" text="Precio" />
-            <TableColumn prefWidth="75.0" text="Monto" />
+          <TableColumn fx:id="carritoProducto" prefWidth="75.0" text="Producto" />
+          <TableColumn fx:id="carritoCantidad" prefWidth="83.0" text="Cantidad" />
+            <TableColumn fx:id="carritoPrecio" prefWidth="67.0" text="Precio" />
+            <TableColumn fx:id="carritoMonto" prefWidth="75.0" text="Monto" />
         </columns>
       </TableView>
       <Label layoutX="784.0" layoutY="14.0" text="CARRITO DE COMPRAS">
@@ -47,5 +47,7 @@
             <Font name="Poppins Black" size="24.0" />
          </font>
       </Label>
+      <Button layoutX="762.0" layoutY="325.0" mnemonicParsing="false" text="Agregar producto al carrito" />
+      <Button layoutX="964.0" layoutY="325.0" mnemonicParsing="false" text="Eliminar producto" />
    </children>
 </AnchorPane>

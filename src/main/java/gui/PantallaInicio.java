@@ -1,6 +1,7 @@
 package gui;
 
 import conexion.DatabaseConnection;
+import dao.DetalleFacturaDao;
 import dao.FacturaDao;
 import dao.ProductoDao;
 import javafx.collections.FXCollections;
@@ -47,11 +48,25 @@ public class PantallaInicio {
     private TableColumn<Factura, String> facturaTipo;
 
 
+    // DetallesFactura
+    @FXML
+    private  TableView<DetalleFactura> tablaCarrito;
+    @FXML
+    private TableColumn<DetalleFactura, String> carritoProducto;
+    @FXML
+    private TableColumn<DetalleFactura, Integer> carritoCantidad;
+    @FXML
+    private TableColumn<DetalleFactura, Double> carritoPrecio;
+    @FXML
+    private TableColumn<DetalleFactura, Double> carritoMonto;
+
+
     private DatabaseConnection connection;
     private String username;
     private String password;
     private final ProductoDao productoDao = new ProductoDao();
     private final FacturaDao facturaDao = new FacturaDao();
+    private final DetalleFacturaDao detalleFacturaDao = new DetalleFacturaDao();
 
     public void initData(DatabaseConnection connection, String username, String password) {
         this.connection = connection;
@@ -61,6 +76,7 @@ public class PantallaInicio {
 
         showProducts();
         showFacturas();
+        showCarrito();
     }
 
 
@@ -214,6 +230,19 @@ public class PantallaInicio {
         facturaTipo.setCellValueFactory(cellData -> cellData.getValue().tipoProperty());
     }
 
+
+    //! <---------- DETALLE FACTURAS ---------->
+    public void showCarrito(){
+        List<DetalleFactura> detalleFacturas = detalleFacturaDao.getCarritoActual(connection.getConnection(username, password));
+
+        ObservableList<DetalleFactura> observableDetalleFacturas = FXCollections.observableArrayList(detalleFacturas);
+        tablaCarrito.setItems(observableDetalleFacturas);
+
+        carritoProducto.setCellValueFactory(cellData -> cellData.getValue().productoProperty());
+        carritoCantidad.setCellValueFactory(cellData -> cellData.getValue().cantidadProperty().asObject());
+        carritoPrecio.setCellValueFactory(cellData -> cellData.getValue().precioUnitarioProperty().asObject());
+        carritoMonto.setCellValueFactory(cellData -> cellData.getValue().subTotalProperty().asObject());
+    }
 
 
 
