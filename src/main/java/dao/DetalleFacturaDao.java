@@ -105,7 +105,6 @@ public class DetalleFacturaDao {
                         insertarStmt.setDouble(4, subTotal);
                         insertarStmt.executeUpdate();
                     }
-                    updateProductQuantity(conn, productoId, cantidad);
                 } else {
                     System.out.println("No hay suficiente stock disponible para el producto ID: " + productoId);
                 }
@@ -114,25 +113,6 @@ public class DetalleFacturaDao {
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al agregar producto al carrito", e);
-        }
-    }
-
-    public void updateProductQuantity(Connection conn, int id, int cantidad) {
-        String sql = "UPDATE Producto SET cantidad = cantidad - ? WHERE id = ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, cantidad);
-            stmt.setInt(2, id);
-
-            int rowsUpdated = stmt.executeUpdate();
-
-            if (rowsUpdated > 0) {
-                System.out.println("Cantidad del producto actualizada correctamente.");
-            } else {
-                System.out.println("No se encontró un producto con el ID especificado.");
-            }
-        } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error al actualizar la cantidad del producto", e);
         }
     }
 
@@ -157,18 +137,18 @@ public class DetalleFacturaDao {
         }
     }
 
-    // Objetivo:
-    // 1. Crear una nueva factura en Factura.
-    // 2. Asignar el factura_id generado a todos los productos del carrito.
     public void generarFactura(Connection conn, String tipoPago, String cliente){
         String insertFacturaSQL = "INSERT INTO Factura (fecha, montoFinal, tipo, cliente) VALUES (NOW(), ?, ?, ?)";
         String updateDetallesSQL = "UPDATE DetalleFactura SET factura_id = ? WHERE factura_id IS NULL";
+        String updateStockSQL = "UPDATE Producto SET cantidad = cantidad - ? WHERE id = ?";
 
         try (PreparedStatement insertFacturaStmt = conn.prepareStatement(insertFacturaSQL, Statement.RETURN_GENERATED_KEYS);
-             PreparedStatement updateDetallesStmt = conn.prepareStatement(updateDetallesSQL)) {
+             PreparedStatement updateDetallesStmt = conn.prepareStatement(updateDetallesSQL);
+             PreparedStatement updateStockStmt = conn.prepareStatement(updateStockSQL)) {
 
             double total = 0.0;
-            for (DetalleFactura detalle : getCarritoActual(conn)) {
+            List<DetalleFactura> carrito = getCarritoActual(conn);
+            for (DetalleFactura detalle : carrito) {
                 total += detalle.getSubTotal();
             }
 
@@ -183,13 +163,18 @@ public class DetalleFacturaDao {
 
                 updateDetallesStmt.setInt(1, facturaId);
                 updateDetallesStmt.executeUpdate();
+
+                for (DetalleFactura detalle : carrito) {
+                    updateStockStmt.setInt(1, detalle.getCantidad());
+                    updateStockStmt.setInt(2, detalle.getProductoId());
+                    updateStockStmt.executeUpdate();
+                }
             }
 
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al generar la factura", e);
         }
     }
-
 
     public double obtenerMontoTotalCarrito(Connection conn) {
         String sql = "SELECT SUM(df.subTotal) AS montoTotal " +
