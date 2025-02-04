@@ -21,7 +21,7 @@
       <Button layoutX="46.0" layoutY="14.0" mnemonicParsing="false" onAction="#addProducts" text="Agregar producto" />
       <Button layoutX="354.0" layoutY="14.0" mnemonicParsing="false" onAction="#deleteProducts" text="Eliminar producto (cuidado)" />
       <Button layoutX="194.0" layoutY="14.0" mnemonicParsing="false" onAction="#updateProducts" text="Modificar producto" />
-      <TableView id="tablaCarrito" fx:id="tablaCarrito" layoutX="762.0" layoutY="58.0" prefHeight="210.0" prefWidth="419.0" stylesheets="@styles.css">
+      <TableView id="tablaCarrito" fx:id="tablaCarrito" layoutX="762.0" layoutY="58.0" prefHeight="210.0" prefWidth="427.0" stylesheets="@styles.css">
         <columns>
             <TableColumn fx:id="carritoId" prefWidth="75.0" text="ID" />
           <TableColumn fx:id="carritoProducto" prefWidth="119.0" text="Producto" />
@@ -44,14 +44,20 @@
             <TableColumn fx:id="clienteTipo" prefWidth="154.0" text="Cliente" />
         </columns>
       </TableView>
-      <Label fx:id="totalLabel" layoutX="762.0" layoutY="271.0">
+      <Label fx:id="totalLabel" layoutX="762.0" layoutY="290.0">
          <font>
             <Font name="Poppins Black" size="24.0" />
          </font>
       </Label>
       <Button layoutX="993.0" layoutY="282.0" mnemonicParsing="false" onAction="#addProductsCarrito" text="Agregar producto al carrito" />
-      <Button layoutX="993.0" layoutY="312.0" mnemonicParsing="false" onAction="#deleteProductsCarrito" prefHeight="26.0" prefWidth="185.0" text="Eliminar producto" />
-      <Button layoutX="837.0" layoutY="312.0" mnemonicParsing="false" onAction="#pagoTransferencia" text="Transferencia" />
-      <Button layoutX="762.0" layoutY="312.0" mnemonicParsing="false" onAction="#pagoEfectivo" text="Efectivo" />
+      <Button layoutX="993.0" layoutY="317.0" mnemonicParsing="false" onAction="#deleteProductsCarrito" prefHeight="26.0" prefWidth="185.0" text="Eliminar producto" />
+      <Button layoutX="993.0" layoutY="387.0" mnemonicParsing="false" onAction="#pagoTransferencia" prefHeight="26.0" prefWidth="185.0" text="Transferencia">
+         <font>
+            <Font size="14.0" />
+         </font></Button>
+      <Button layoutX="993.0" layoutY="350.0" mnemonicParsing="false" onAction="#pagoEfectivo" prefHeight="26.0" prefWidth="185.0" text="Efectivo">
+         <font>
+            <Font size="14.0" />
+         </font></Button>
    </children>
 </AnchorPane>
