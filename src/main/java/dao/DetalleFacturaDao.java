@@ -84,7 +84,6 @@ public class DetalleFacturaDao {
         return carrito;
     }
 
-
     public void addProductoCarrito(Connection conn, int productoId, int cantidad) {
         String obtenerPrecioSql = "SELECT precio, cantidad FROM Producto WHERE id = ?";
         String insertarSql = "INSERT INTO DetalleFactura (producto_id, cantidad, precioUnitario, subTotal, factura_id) VALUES (?, ?, ?, ?, NULL)";
@@ -137,7 +136,6 @@ public class DetalleFacturaDao {
         }
     }
 
-
     public void deleteProductoCarrito(Connection conn, int detalleId) {
         String sql = "DELETE FROM DetalleFactura WHERE producto_id = ? AND factura_id IS NULL";
 
@@ -149,7 +147,6 @@ public class DetalleFacturaDao {
         }
     }
 
-
     public void vaciarCarrito(Connection conn) {
         String sql = "DELETE FROM DetalleFactura WHERE factura_id IS NULL";
 
@@ -160,11 +157,9 @@ public class DetalleFacturaDao {
         }
     }
 
-
     // Objetivo:
     // 1. Crear una nueva factura en Factura.
     // 2. Asignar el factura_id generado a todos los productos del carrito.
-
     public void generarFactura(Connection conn, String tipoPago){
         String insertFacturaSQL = "INSERT INTO Factura (fecha, montoFinal, tipo) VALUES (NOW(), ?, ?)";
         String updateDetallesSQL = "UPDATE DetalleFactura SET factura_id = ? WHERE factura_id IS NULL";

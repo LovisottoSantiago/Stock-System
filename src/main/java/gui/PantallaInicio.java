@@ -8,17 +8,35 @@ import javafx.collections.FXCollections;
 import java.text.DecimalFormat;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextInputDialog;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import modelo.DetalleFactura;
 import modelo.Factura;
 import javafx.util.Callback;
-import javafx.scene.control.TableCell;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import java.text.SimpleDateFormat;
 import modelo.Producto;
-
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import java.util.Optional;
 import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.List;
@@ -283,6 +301,9 @@ public class PantallaInicio {
         Optional<String> resultId = dialogId.showAndWait();
         int id = resultId.map(Integer::parseInt).orElseThrow(() -> new RuntimeException("ID no ingresado"));
 
+        boolean confirmacion = mostrarImagenProducto(id);
+        if (!confirmacion) return;
+
         TextInputDialog dialogCantidad = new TextInputDialog();
         dialogCantidad.setTitle("Agregar Producto");
         dialogCantidad.setHeaderText(null);
@@ -319,6 +340,69 @@ public class PantallaInicio {
     public void pagoEfectivo(){
         detalleFacturaDao.generarFactura(connection.getConnection(username, password), "Efectivo");
         actualizarTodo();
+    }
+
+    private boolean mostrarImagenProducto(int productId) {
+        String imageUrl = productoDao.getImageUrlById(connection.getConnection(username, password), productId);
+
+        Stage imageStage = new Stage();
+        imageStage.initModality(Modality.APPLICATION_MODAL);
+        imageStage.setTitle("Confirmar Producto");
+        imageStage.setWidth(350);
+
+        StackPane imageContainer = new StackPane();
+        imageContainer.setPrefSize(300, 320);
+
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            Rectangle placeholder = new Rectangle(300, 300, Color.LIGHTGRAY);
+            Text noImageText = new Text("No hay imagen disponible");
+            noImageText.setFill(Color.BLACK);
+            noImageText.setFont(new Font(18));
+            imageContainer.getChildren().addAll(placeholder, noImageText);
+        } else {
+            try {
+                ImageView imageView = new ImageView(new Image(imageUrl, true));
+                imageView.setPreserveRatio(true);
+                imageView.setFitWidth(300);
+                imageView.setFitHeight(300);
+                imageContainer.getChildren().add(imageView);
+            } catch (Exception e) {
+
+                Rectangle placeholder = new Rectangle(300, 300, Color.LIGHTGRAY);
+                Text noInternetText = new Text("No hay internet");
+                noInternetText.setFill(Color.BLACK);
+                noInternetText.setFont(new Font(18));
+                imageContainer.getChildren().addAll(placeholder, noInternetText);
+            }
+        }
+
+        Button acceptButton = new Button("Aceptar");
+        Button cancelButton = new Button("Cancelar");
+
+        final boolean[] accepted = {false};
+
+        acceptButton.setOnAction(e -> {
+            accepted[0] = true;
+            imageStage.close();
+        });
+
+        cancelButton.setOnAction(e -> {
+            accepted[0] = false;
+            imageStage.close();
+        });
+
+        HBox buttonBox = new HBox(10, acceptButton, cancelButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        VBox root = new VBox(5, imageContainer, buttonBox);
+        root.setAlignment(Pos.CENTER);
+        root.setPadding(new Insets(10, 10, 15, 10));
+
+        Scene scene = new Scene(root);
+        imageStage.setScene(scene);
+        imageStage.showAndWait();
+
+        return accepted[0];
     }
 
 

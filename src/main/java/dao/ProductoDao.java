@@ -135,5 +135,20 @@ public class ProductoDao {
     }
 
 
+    public String getImageUrlById(Connection conn, int id) {
+        String sql = "SELECT imagen_url FROM Producto WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("imagen_url");
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al obtener la URL de la imagen", e);
+        }
+        return null;
+    }
+
+
 
 }
