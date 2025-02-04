@@ -35,12 +35,13 @@
             <Font name="Poppins Black" size="24.0" />
          </font>
       </Label>
-      <TableView id="tablaFacturas" fx:id="tablaFacturas" layoutX="46.0" layoutY="359.0" prefHeight="148.0" prefWidth="684.0" stylesheets="@styles.css">
+      <TableView id="tablaFacturas" fx:id="tablaFacturas" layoutX="46.0" layoutY="359.0" prefHeight="148.0" prefWidth="727.0" stylesheets="@styles.css">
         <columns>
-          <TableColumn fx:id="facturaId" prefWidth="98.0" text="ID" />
-          <TableColumn fx:id="facturaFecha" prefWidth="215.0" text="Fecha" />
-            <TableColumn fx:id="facturaMonto" prefWidth="202.0" text="Monto" />
-            <TableColumn fx:id="facturaTipo" prefWidth="148.0" text="Tipo" />
+          <TableColumn fx:id="facturaId" prefWidth="77.0" text="ID" />
+          <TableColumn fx:id="facturaFecha" prefWidth="184.0" text="Fecha" />
+            <TableColumn fx:id="facturaMonto" prefWidth="165.0" text="Monto" />
+            <TableColumn fx:id="facturaTipo" prefWidth="122.0" text="Tipo" />
+            <TableColumn fx:id="clienteTipo" prefWidth="154.0" text="Cliente" />
         </columns>
       </TableView>
       <Label fx:id="totalLabel" layoutX="762.0" layoutY="271.0">

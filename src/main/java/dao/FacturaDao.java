@@ -22,7 +22,7 @@ public class FacturaDao {
 
     //! <---------- GET ALL PRODUCTS ---------->
     public List<Factura> getAllProductos(Connection conn) {
-        String sql = "SELECT id, fecha, montofinal, tipo FROM Factura";
+        String sql = "SELECT id, fecha, montofinal, tipo, cliente FROM Factura";
         List<Factura> facturas = new ArrayList<>();
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -30,7 +30,8 @@ public class FacturaDao {
                         rs.getInt("id"),
                         rs.getTimestamp("fecha"),
                         rs.getDouble("montoFinal"),
-                        rs.getString("tipo")
+                        rs.getString("tipo"),
+                        rs.getString("cliente")
                 ));
             }
         } catch (SQLException e) {

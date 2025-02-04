@@ -160,8 +160,8 @@ public class DetalleFacturaDao {
     // Objetivo:
     // 1. Crear una nueva factura en Factura.
     // 2. Asignar el factura_id generado a todos los productos del carrito.
-    public void generarFactura(Connection conn, String tipoPago){
-        String insertFacturaSQL = "INSERT INTO Factura (fecha, montoFinal, tipo) VALUES (NOW(), ?, ?)";
+    public void generarFactura(Connection conn, String tipoPago, String cliente){
+        String insertFacturaSQL = "INSERT INTO Factura (fecha, montoFinal, tipo, cliente) VALUES (NOW(), ?, ?, ?)";
         String updateDetallesSQL = "UPDATE DetalleFactura SET factura_id = ? WHERE factura_id IS NULL";
 
         try (PreparedStatement insertFacturaStmt = conn.prepareStatement(insertFacturaSQL, Statement.RETURN_GENERATED_KEYS);
@@ -174,6 +174,7 @@ public class DetalleFacturaDao {
 
             insertFacturaStmt.setDouble(1, total);
             insertFacturaStmt.setString(2, tipoPago);
+            insertFacturaStmt.setString(3, cliente);
             insertFacturaStmt.executeUpdate();
 
             ResultSet generatedKeys = insertFacturaStmt.getGeneratedKeys();

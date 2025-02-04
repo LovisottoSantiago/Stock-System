@@ -70,6 +70,8 @@ public class PantallaInicio {
     private TableColumn<Factura, Double> facturaMonto;
     @FXML
     private TableColumn<Factura, String> facturaTipo;
+    @FXML
+    private TableColumn<Factura, String> clienteTipo;
 
 
     // DetallesFactura
@@ -276,6 +278,7 @@ public class PantallaInicio {
 
         facturaMonto.setCellValueFactory(cellData -> cellData.getValue().montoFinalProperty().asObject());
         facturaTipo.setCellValueFactory(cellData -> cellData.getValue().tipoProperty());
+        clienteTipo.setCellValueFactory(cellData -> cellData.getValue().clienteProperty());
     }
 
 
@@ -333,13 +336,25 @@ public class PantallaInicio {
     }
 
     public void pagoTransferencia(){
-        detalleFacturaDao.generarFactura(connection.getConnection(username, password), "Transferencia");
+        String cliente = asignarCliente();
+        detalleFacturaDao.generarFactura(connection.getConnection(username, password), "Transferencia", cliente);
         actualizarTodo();
     }
 
     public void pagoEfectivo(){
-        detalleFacturaDao.generarFactura(connection.getConnection(username, password), "Efectivo");
+        String cliente = asignarCliente();
+        detalleFacturaDao.generarFactura(connection.getConnection(username, password), "Efectivo", cliente);
         actualizarTodo();
+    }
+
+    public String asignarCliente(){
+        TextInputDialog dialogId = new TextInputDialog();
+        dialogId.setTitle("Asignar Cliente");
+        dialogId.setHeaderText(null);
+        dialogId.setContentText("Nombre:");
+        Optional<String> resultId = dialogId.showAndWait();
+        String cliente = resultId.orElseThrow(() -> new RuntimeException("Cliente no ingresado"));
+        return cliente;
     }
 
     private boolean mostrarImagenProducto(int productId) {
@@ -404,7 +419,6 @@ public class PantallaInicio {
 
         return accepted[0];
     }
-
 
     public void actualizarTodo(){
         showProducts();
