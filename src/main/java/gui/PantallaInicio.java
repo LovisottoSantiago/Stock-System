@@ -88,7 +88,14 @@ public class PantallaInicio {
     @FXML
     private TableColumn<DetalleFactura, Double> carritoMonto;
     @FXML
-    private Label totalLabel;
+    private Label totalLabel; //para el carrito
+    @FXML
+    private Label labelMontoEf;
+    @FXML
+    private Label labelMontoTr;
+    @FXML
+    private Label labelFacturaDiaria;
+
 
     private DatabaseConnection connection;
     private String username;
@@ -121,6 +128,16 @@ public class PantallaInicio {
         columnCategoria.setCellValueFactory(cellData -> cellData.getValue().categoriaProperty());
         columnCantidad.setCellValueFactory(cellData -> cellData.getValue().cantidadProperty().asObject());
         columnPrecio.setCellValueFactory(cellData -> cellData.getValue().precioProperty().asObject());
+
+        // Aplicar formato a la columna de precios
+        DecimalFormat decimalFormat = new DecimalFormat("$#,###");
+        columnPrecio.setCellFactory(col -> new TableCell<Producto, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : decimalFormat.format(item));
+            }
+        });
     }
 
     public void addProducts(){
@@ -266,7 +283,7 @@ public class PantallaInicio {
                     protected void updateItem(Timestamp item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item != null) {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd / HH:mm:ss");
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy | HH:mm");
                             setText(sdf.format(item));
                         } else {
                             setText(null);
@@ -279,6 +296,16 @@ public class PantallaInicio {
         facturaMonto.setCellValueFactory(cellData -> cellData.getValue().montoFinalProperty().asObject());
         facturaTipo.setCellValueFactory(cellData -> cellData.getValue().tipoProperty());
         clienteTipo.setCellValueFactory(cellData -> cellData.getValue().clienteProperty());
+
+        // Aplicar formato a la columna de precios
+        DecimalFormat decimalFormat = new DecimalFormat("$#,###");
+        facturaMonto.setCellFactory(col -> new TableCell<Factura, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : decimalFormat.format(item));
+            }
+        });
     }
 
 
@@ -294,6 +321,23 @@ public class PantallaInicio {
         carritoCantidad.setCellValueFactory(cellData -> cellData.getValue().cantidadProperty().asObject());
         carritoPrecio.setCellValueFactory(cellData -> cellData.getValue().precioUnitarioProperty().asObject());
         carritoMonto.setCellValueFactory(cellData -> cellData.getValue().subTotalProperty().asObject());
+
+        // Aplicar formato a la columna de precios
+        DecimalFormat decimalFormat = new DecimalFormat("$#,###");
+        carritoPrecio.setCellFactory(col -> new TableCell<DetalleFactura, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : decimalFormat.format(item));
+            }
+        });
+        carritoMonto.setCellFactory(col -> new TableCell<DetalleFactura, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : decimalFormat.format(item));
+            }
+        });
     }
 
     public void addProductsCarrito(){
@@ -318,7 +362,7 @@ public class PantallaInicio {
         double valor = detalleFacturaDao.obtenerMontoTotalCarrito(connection.getConnection(username, password));
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
         String valorFormateado = decimalFormat.format(valor);
-        totalLabel.setText("Total: " + valorFormateado);
+        totalLabel.setText("Total: $" + valorFormateado);
         // Refresh table
         showCarrito();
     }
@@ -333,6 +377,14 @@ public class PantallaInicio {
 
         detalleFacturaDao.deleteProductoCarrito(connection.getConnection(username, password), id);
         showCarrito();
+
+        double total = detalleFacturaDao.obtenerMontoTotalCarrito(connection.getConnection(username, password));
+        DecimalFormat decimalFormat = new DecimalFormat("$#,###");
+        if (total == 0) {
+            totalLabel.setText("Total: $0");
+        } else {
+            totalLabel.setText("Total: " + decimalFormat.format(total));
+        }
     }
 
     public void pagoTransferencia(){
@@ -424,7 +476,29 @@ public class PantallaInicio {
         showProducts();
         showFacturas();
         showCarrito();
-        totalLabel.setText("Total: 0");
+
+        double totalCarrito = detalleFacturaDao.obtenerMontoTotalCarrito(connection.getConnection(username, password));
+        if (totalCarrito > 0) {
+            DecimalFormat decimalFormat = new DecimalFormat("$#,###");
+            String valorFormateado = decimalFormat.format(totalCarrito);
+            totalLabel.setText("Total: " + valorFormateado);
+        } else {
+            totalLabel.setText("Total: $0");
+        }
+
+        obtenerMontoDiario();
+    }
+
+    public void obtenerMontoDiario() {
+        double montoEfectivo = facturaDao.getMontoDiario(connection.getConnection(username, password), "Efectivo");
+        double montoTransferencia = facturaDao.getMontoDiario(connection.getConnection(username, password), "Transferencia");
+        double montoDiarioTotal = montoEfectivo + montoTransferencia;
+
+        DecimalFormat decimalFormat = new DecimalFormat("$#,###");
+
+        labelMontoEf.setText("Total diario facturado efectivo: " + decimalFormat.format(montoEfectivo));
+        labelMontoTr.setText("Total diario facturado transferencia: " + decimalFormat.format(montoTransferencia));
+        labelFacturaDiaria.setText(decimalFormat.format(montoDiarioTotal));
     }
 
 

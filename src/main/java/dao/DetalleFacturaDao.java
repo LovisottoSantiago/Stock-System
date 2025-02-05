@@ -2,18 +2,17 @@ package dao;
 
 import modelo.DetalleFactura;
 import modelo.Producto;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-
 import static conexion.DatabaseConnection.logger;
 
 public class DetalleFacturaDao {
 
     public DetalleFacturaDao() {
     }
+
 
     public List<DetalleFactura> getDetallesFactura(int facturaId, Connection conn) {
         String sql = "SELECT df.id, p.id AS producto_id, p.titulo, df.cantidad, df.precioUnitario, df.subTotal " +
@@ -84,6 +83,7 @@ public class DetalleFacturaDao {
         return carrito;
     }
 
+
     public void addProductoCarrito(Connection conn, int productoId, int cantidad) {
         String obtenerPrecioSql = "SELECT precio, cantidad FROM Producto WHERE id = ?";
         String insertarSql = "INSERT INTO DetalleFactura (producto_id, cantidad, precioUnitario, subTotal, factura_id) VALUES (?, ?, ?, ?, NULL)";
@@ -116,6 +116,7 @@ public class DetalleFacturaDao {
         }
     }
 
+
     public void deleteProductoCarrito(Connection conn, int detalleId) {
         String sql = "DELETE FROM DetalleFactura WHERE producto_id = ? AND factura_id IS NULL";
 
@@ -127,6 +128,7 @@ public class DetalleFacturaDao {
         }
     }
 
+
     public void vaciarCarrito(Connection conn) {
         String sql = "DELETE FROM DetalleFactura WHERE factura_id IS NULL";
 
@@ -136,6 +138,7 @@ public class DetalleFacturaDao {
             logger.log(Level.SEVERE, "Error al vaciar el carrito", e);
         }
     }
+
 
     public void generarFactura(Connection conn, String tipoPago, String cliente){
         String insertFacturaSQL = "INSERT INTO Factura (fecha, montoFinal, tipo, cliente) VALUES (NOW(), ?, ?, ?)";
@@ -175,6 +178,7 @@ public class DetalleFacturaDao {
             logger.log(Level.SEVERE, "Error al generar la factura", e);
         }
     }
+
 
     public double obtenerMontoTotalCarrito(Connection conn) {
         String sql = "SELECT SUM(df.subTotal) AS montoTotal " +
