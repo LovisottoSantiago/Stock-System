@@ -8,17 +8,23 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="300.0" maxWidth="350.0" minHeight="300.0" minWidth="350.0" prefHeight="300.0" prefWidth="350.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PantallaLogin">
+<VBox alignment="CENTER" maxHeight="300.0" maxWidth="350.0" minHeight="300.0" minWidth="350.0" prefHeight="300.0" prefWidth="350.0" spacing="20.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PantallaLogin">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
     <Label text="Sistema de Stock">
         <font>
-            <Font name="Poppins Bold" size="14.0" />
+            <Font name="Poppins Bold" size="16.0" />
         </font>
     </Label>
     <TextField fx:id="usernameLabel" promptText="nombre" />
     <PasswordField fx:id="passwordLabel" promptText="contraseña" />
-    <Label fx:id="connectedFlag" text="No estas conectado" textFill="#685c5c" />
-    <Button onAction="#onHelloButtonClick" text="Entrar" />
+    <Label fx:id="connectedFlag" text="No estas conectado" textFill="#685c5c">
+      <font>
+         <Font name="Poppins Bold" size="14.0" />
+      </font></Label>
+    <Button onAction="#onHelloButtonClick" style="-fx-background-color: black;" text="Entrar" textFill="WHITE">
+      <font>
+         <Font name="Poppins Bold" size="18.0" />
+      </font></Button>
 </VBox>
