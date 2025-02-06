@@ -96,6 +96,9 @@ public class PantallaInicio {
     @FXML
     private Label labelFacturaDiaria;
 
+    // Extra
+
+
 
     private DatabaseConnection connection;
     private String username;
@@ -308,6 +311,18 @@ public class PantallaInicio {
         });
     }
 
+    public void obtenerMontoDiario() {
+        double montoEfectivo = facturaDao.getMontoDiario(connection.getConnection(username, password), "Efectivo");
+        double montoTransferencia = facturaDao.getMontoDiario(connection.getConnection(username, password), "Transferencia");
+        double montoDiarioTotal = montoEfectivo + montoTransferencia;
+
+        DecimalFormat decimalFormat = new DecimalFormat("$#,###");
+
+        labelMontoEf.setText("Total diario facturado efectivo: " + decimalFormat.format(montoEfectivo));
+        labelMontoTr.setText("Total diario facturado transferencia: " + decimalFormat.format(montoTransferencia));
+        labelFacturaDiaria.setText(decimalFormat.format(montoDiarioTotal));
+    }
+
 
     //! <---------- DETALLE FACTURAS ---------->
     public void showCarrito(){
@@ -394,6 +409,10 @@ public class PantallaInicio {
     }
 
     public void pagoEfectivo(){
+        if (!darVuelto()){
+            return;
+        }
+
         String cliente = asignarCliente();
         detalleFacturaDao.generarFactura(connection.getConnection(username, password), "Efectivo", cliente);
         actualizarTodo();
@@ -489,17 +508,55 @@ public class PantallaInicio {
         obtenerMontoDiario();
     }
 
-    public void obtenerMontoDiario() {
-        double montoEfectivo = facturaDao.getMontoDiario(connection.getConnection(username, password), "Efectivo");
-        double montoTransferencia = facturaDao.getMontoDiario(connection.getConnection(username, password), "Transferencia");
-        double montoDiarioTotal = montoEfectivo + montoTransferencia;
 
-        DecimalFormat decimalFormat = new DecimalFormat("$#,###");
 
-        labelMontoEf.setText("Total diario facturado efectivo: " + decimalFormat.format(montoEfectivo));
-        labelMontoTr.setText("Total diario facturado transferencia: " + decimalFormat.format(montoTransferencia));
-        labelFacturaDiaria.setText(decimalFormat.format(montoDiarioTotal));
+    //! <---------- FUNCIONES EXTRA ---------->
+    public boolean darVuelto(){
+        double totalCarrito = detalleFacturaDao.obtenerMontoTotalCarrito(connection.getConnection(username, password));
+
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Dar vuelto");
+        dialog.setHeaderText("Total: " + totalCarrito);
+        dialog.setContentText("Pago con: ");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isEmpty()) {
+            // El usuario canceló la operación
+            return false;
+        }
+
+        try {
+            double pago = Double.parseDouble(result.get());
+
+            // Calcula el vuelto
+            double vuelto = pago - totalCarrito;
+
+            if(vuelto < 0) {
+                // Si el pago es insuficiente, se muestra un error
+                Alert alertError = new Alert(Alert.AlertType.ERROR);
+                alertError.setTitle("Pago insuficiente");
+                alertError.setHeaderText(null);
+                alertError.setContentText("El pago ingresado es menor al total de la compra.");
+                alertError.showAndWait();
+                return false;
+            } else {
+                // Si el pago es suficiente, se muestra el cambio al usuario
+                Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
+                alertInfo.setTitle("Cambio");
+                alertInfo.setHeaderText("El vuelto es:");
+                alertInfo.setContentText("$" + vuelto);
+                alertInfo.showAndWait();
+                return true;
+            }
+        } catch(NumberFormatException e) {
+            // En caso de que el usuario no ingrese un número válido
+            Alert alertError = new Alert(Alert.AlertType.ERROR);
+            alertError.setTitle("Número inválido");
+            alertError.setHeaderText(null);
+            alertError.setContentText("Por favor, ingresa un número válido para el pago.");
+            alertError.showAndWait();
+            return false;
+        }
     }
-
 
 }

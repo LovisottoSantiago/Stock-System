@@ -45,7 +45,7 @@
             <TableColumn fx:id="clienteTipo" prefWidth="154.0" text="Cliente" />
         </columns>
       </TableView>
-      <Label fx:id="totalLabel" layoutX="815.0" layoutY="275.0">
+      <Label fx:id="totalLabel" layoutX="835.0" layoutY="278.0">
          <font>
             <Font name="Poppins Bold" size="36.0" />
          </font>
