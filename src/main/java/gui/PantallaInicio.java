@@ -509,14 +509,15 @@ public class PantallaInicio {
     }
 
 
-
     //! <---------- FUNCIONES EXTRA ---------->
     public boolean darVuelto(){
         double totalCarrito = detalleFacturaDao.obtenerMontoTotalCarrito(connection.getConnection(username, password));
+        DecimalFormat decimalFormat = new DecimalFormat("$#,###");
+        String totalCarritoStr = decimalFormat.format(totalCarrito);
 
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Dar vuelto");
-        dialog.setHeaderText("Total: " + totalCarrito);
+        dialog.setHeaderText("Total: " + totalCarritoStr);
         dialog.setContentText("Pago con: ");
 
         Optional<String> result = dialog.showAndWait();
@@ -534,6 +535,8 @@ public class PantallaInicio {
             if(vuelto < 0) {
                 // Si el pago es insuficiente, se muestra un error
                 Alert alertError = new Alert(Alert.AlertType.ERROR);
+                alertError.setWidth(300);
+                alertError.setHeight(300);
                 alertError.setTitle("Pago insuficiente");
                 alertError.setHeaderText(null);
                 alertError.setContentText("El pago ingresado es menor al total de la compra.");
@@ -542,15 +545,20 @@ public class PantallaInicio {
             } else {
                 // Si el pago es suficiente, se muestra el cambio al usuario
                 Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
+                alertInfo.setWidth(300);
+                alertInfo.setHeight(300);
                 alertInfo.setTitle("Cambio");
                 alertInfo.setHeaderText("El vuelto es:");
-                alertInfo.setContentText("$" + vuelto);
+                String vueltoStr = decimalFormat.format(vuelto);
+                alertInfo.setContentText(vueltoStr);
                 alertInfo.showAndWait();
                 return true;
             }
         } catch(NumberFormatException e) {
             // En caso de que el usuario no ingrese un número válido
             Alert alertError = new Alert(Alert.AlertType.ERROR);
+            alertError.setWidth(300);
+            alertError.setHeight(300);
             alertError.setTitle("Número inválido");
             alertError.setHeaderText(null);
             alertError.setContentText("Por favor, ingresa un número válido para el pago.");
@@ -558,5 +566,6 @@ public class PantallaInicio {
             return false;
         }
     }
+
 
 }
