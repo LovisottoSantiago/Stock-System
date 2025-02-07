@@ -2,6 +2,8 @@ package dao;
 
 import modelo.DetalleFactura;
 import modelo.Producto;
+import utils.AlertUtil;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,8 @@ import java.util.logging.Level;
 import static conexion.DatabaseConnection.logger;
 
 public class DetalleFacturaDao {
+
+    private AlertUtil alertUtil = new AlertUtil();
 
     public DetalleFacturaDao() {
     }
@@ -107,12 +111,16 @@ public class DetalleFacturaDao {
                     }
                 } else {
                     System.out.println("No hay suficiente stock disponible para el producto ID: " + productoId);
+                    alertUtil.mostrarAlerta("No hay stock suficiente");
+
                 }
             } else {
                 System.out.println("No se encontró el producto con ID: " + productoId);
+                alertUtil.mostrarAlerta("No se encontro al producto con ID" + productoId);
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al agregar producto al carrito", e);
+            alertUtil.mostrarAlerta("Error");
         }
     }
 
@@ -125,6 +133,7 @@ public class DetalleFacturaDao {
             stmt.executeUpdate();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al eliminar producto del carrito", e);
+            alertUtil.mostrarAlerta("Error al eliminar producto del carrito");
         }
     }
 
@@ -136,6 +145,7 @@ public class DetalleFacturaDao {
             stmt.executeUpdate();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al vaciar el carrito", e);
+            alertUtil.mostrarAlerta("Error al vaciar el carrito");
         }
     }
 
@@ -176,6 +186,7 @@ public class DetalleFacturaDao {
 
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al generar la factura", e);
+            alertUtil.mostrarAlerta("Error al generar la factura");
         }
     }
 
@@ -195,9 +206,43 @@ public class DetalleFacturaDao {
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al obtener el monto total del carrito", e);
+            alertUtil.mostrarAlerta("Error al obtener el monto total del carrito");
         }
 
         return montoTotal;
+    }
+
+
+    // Mostrar una factura en el carrito
+    public List<DetalleFactura> getDetallesFacturaPorId(Connection conn, int facturaId) {
+        String sql = "SELECT df.id, p.id AS producto_id, p.titulo, df.cantidad, df.precioUnitario, df.subTotal " +
+                "FROM DetalleFactura df " +
+                "JOIN Producto p ON df.producto_id = p.id " +
+                "WHERE df.factura_id = ?";
+        List<DetalleFactura> detalles = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, facturaId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                DetalleFactura detalle = new DetalleFactura(
+                        rs.getInt("id"),
+                        rs.getInt("producto_id"),
+                        rs.getString("titulo"),
+                        rs.getInt("cantidad"),
+                        rs.getDouble("precioUnitario"),
+                        rs.getDouble("subTotal")
+                );
+                detalles.add(detalle);
+            }
+
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al obtener los detalles de la factura con ID: " + facturaId, e);
+            alertUtil.mostrarAlerta("Error al obtener los detalles de la factura.");
+        }
+
+        return detalles;
     }
 
 

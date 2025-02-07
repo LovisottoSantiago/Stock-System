@@ -3,6 +3,7 @@ package dao;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import modelo.Producto;
+import utils.AlertUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import java.util.logging.Level;
 import static conexion.DatabaseConnection.logger;
 
 public class ProductoDao {
+
+    private AlertUtil alertUtil = new AlertUtil();
 
     public ProductoDao() {
 
@@ -60,6 +63,7 @@ public class ProductoDao {
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error inserting row into the database", e);
+            alertUtil.mostrarAlerta("Error insertando productos");
         }
     }
 
@@ -77,6 +81,7 @@ public class ProductoDao {
                 title = rs.getString("titulo");
             } else {
                 System.out.println("No se encontró un producto con ese ID.");
+                alertUtil.mostrarAlerta("No se encontró un producto con ese ID.");
                 return;
             }
         } catch (Exception e) {
@@ -128,9 +133,11 @@ public class ProductoDao {
                 System.out.println("Producto actualizado correctamente.");
             } else {
                 System.out.println("No se encontró un producto con el ID especificado.");
+
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al actualizar el producto", e);
+            alertUtil.mostrarAlerta("Error al actualizar el producto.");
         }
     }
 
@@ -148,7 +155,6 @@ public class ProductoDao {
         }
         return null;
     }
-
 
 
 }
