@@ -245,5 +245,54 @@ public class DetalleFacturaDao {
         return detalles;
     }
 
+    // Mostrar factura vieja aunque ya no tenga productos en stock
+    public void addProductosViejos(Connection conn, int productoId, int cantidad) {
+        String obtenerPrecioSql = "SELECT precio, cantidad FROM Producto WHERE id = ?";
+        String insertarSql = "INSERT INTO DetalleFactura (producto_id, cantidad, precioUnitario, subTotal, factura_id) VALUES (?, ?, ?, ?, NULL)";
+
+        try (PreparedStatement obtenerPrecioStmt = conn.prepareStatement(obtenerPrecioSql)) {
+            obtenerPrecioStmt.setInt(1, productoId);
+            ResultSet rs = obtenerPrecioStmt.executeQuery();
+
+            if (rs.next()) {
+                int cantidadDisponible = rs.getInt("cantidad");
+                double precioUnitario = rs.getDouble("precio");
+                double subTotal = cantidad * precioUnitario;
+
+                if (cantidadDisponible >= cantidad) {
+                    // Si hay stock suficiente, agregar el producto normalmente
+                    try (PreparedStatement insertarStmt = conn.prepareStatement(insertarSql)) {
+                        insertarStmt.setInt(1, productoId);
+                        insertarStmt.setInt(2, cantidad);
+                        insertarStmt.setDouble(3, precioUnitario);
+                        insertarStmt.setDouble(4, subTotal);
+                        insertarStmt.executeUpdate();
+                    }
+                } else {
+                    // Si no hay stock suficiente, agregar el producto con la cantidad original y mostrar la alerta
+                    System.out.println("No hay suficiente stock disponible para el producto ID: " + productoId);
+                    alertUtil.mostrarAlerta("No hay stock suficiente para el producto " + productoId);
+
+                    // Se agrega la cantidad original, aunque no haya suficiente stock
+                    try (PreparedStatement insertarStmt = conn.prepareStatement(insertarSql)) {
+                        insertarStmt.setInt(1, productoId);
+                        insertarStmt.setInt(2, cantidad);  // cantidad original
+                        insertarStmt.setDouble(3, precioUnitario);
+                        insertarStmt.setDouble(4, cantidad * precioUnitario);
+                        insertarStmt.executeUpdate();
+                    }
+                }
+            } else {
+                System.out.println("No se encontró el producto con ID: " + productoId);
+                alertUtil.mostrarAlerta("No se encontró el producto con ID: " + productoId);
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al agregar producto al carrito", e);
+            alertUtil.mostrarAlerta("Error al agregar producto al carrito");
+        }
+    }
+
+
+
 
 }

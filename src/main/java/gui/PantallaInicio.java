@@ -428,6 +428,11 @@ public class PantallaInicio {
         return cliente;
     }
 
+    public void vaciarCarrito(){
+        detalleFacturaDao.vaciarCarrito(connection.getConnection(username, password));
+        actualizarTodo();
+    }
+
     private boolean mostrarImagenProducto(int productId) {
         String imageUrl = productoDao.getImageUrlById(connection.getConnection(username, password), productId);
 
@@ -508,17 +513,53 @@ public class PantallaInicio {
         obtenerMontoDiario();
     }
 
+    public void mostrarFacturaPorID() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Cargar Factura");
+        dialog.setHeaderText(null);
+        dialog.setContentText("ID de la factura:");
+
+        Optional<String> resultId = dialog.showAndWait();
+        if (!resultId.isPresent() || resultId.get().trim().isEmpty()) {
+            return;
+        }
+
+        int facturaId;
+        try {
+            facturaId = Integer.parseInt(resultId.get().trim());
+        } catch (NumberFormatException e) {
+            return;
+        }
+
+        List<DetalleFactura> detalles = detalleFacturaDao.getDetallesFacturaPorId(connection.getConnection(username, password), facturaId);
+
+        if (detalles.isEmpty()) {
+            return;
+        }
+
+        // Clonar los detalles al carrito actual (sin asignar factura_id)
+        for (DetalleFactura detalle : detalles) {
+            detalleFacturaDao.addProductosViejos(
+                    connection.getConnection(username, password),
+                    detalle.getProductoId(),
+                    detalle.getCantidad()
+            );
+        }
+
+        actualizarTodo();
+    }
+
+
 
     //! <---------- FUNCIONES EXTRA ---------->
     public boolean darVuelto(){
         double totalCarrito = detalleFacturaDao.obtenerMontoTotalCarrito(connection.getConnection(username, password));
         DecimalFormat decimalFormat = new DecimalFormat("$#,###");
         String totalCarritoStr = decimalFormat.format(totalCarrito);
-
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Dar vuelto");
         dialog.setHeaderText("Total: " + totalCarritoStr);
-        dialog.setContentText("Pago con: ");
+        dialog.setContentText("Pagó con: ");
 
         Optional<String> result = dialog.showAndWait();
         if (result.isEmpty()) {
@@ -528,7 +569,6 @@ public class PantallaInicio {
 
         try {
             double pago = Double.parseDouble(result.get());
-
             // Calcula el vuelto
             double vuelto = pago - totalCarrito;
 
@@ -548,9 +588,9 @@ public class PantallaInicio {
                 alertInfo.setWidth(300);
                 alertInfo.setHeight(300);
                 alertInfo.setTitle("Cambio");
-                alertInfo.setHeaderText("El vuelto es:");
+                alertInfo.setHeaderText(null);
                 String vueltoStr = decimalFormat.format(vuelto);
-                alertInfo.setContentText(vueltoStr);
+                alertInfo.setContentText("El vuelto es: " + vueltoStr);
                 alertInfo.showAndWait();
                 return true;
             }
