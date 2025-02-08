@@ -157,4 +157,19 @@ public class ProductoDao {
     }
 
 
+    public boolean productoExiste(Connection conn, int id){
+        String query = "SELECT titulo FROM public.producto WHERE ID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)){
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return  true;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
 }

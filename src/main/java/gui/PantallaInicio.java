@@ -57,7 +57,8 @@ public class PantallaInicio {
     private TableColumn<Producto, Integer> columnCantidad;
     @FXML
     private TableColumn<Producto, Double> columnPrecio;
-
+    @FXML
+    private TextField searchField = new TextField();
 
     // Factura
     @FXML
@@ -113,6 +114,10 @@ public class PantallaInicio {
         this.password = password;
         System.out.println("Conexión establecida: " + connection);
 
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filterProducts(newValue);  // Llama al método cada vez que el usuario escribe algo
+        });
+
         actualizarTodo();
     }
 
@@ -122,7 +127,8 @@ public class PantallaInicio {
         List<Producto> productos = productoDao.getAllProductos(connection.getConnection(username, password));
 
         ObservableList<Producto> observableProductos = FXCollections.observableArrayList(productos);
-        observableProductos.sort(Comparator.comparing(Producto::getId));
+        observableProductos.sort(Comparator.comparing(Producto::getCategoria)
+                .thenComparing(Producto::getTitulo));
         tablaProductos.setItems(observableProductos);
 
 
@@ -150,6 +156,15 @@ public class PantallaInicio {
         dialogId.setContentText("ID:");
         Optional<String> resultId = dialogId.showAndWait();
         int id = resultId.map(Integer::parseInt).orElseThrow(() -> new RuntimeException("ID no ingresado"));
+
+        if (productoDao.productoExiste(connection.getConnection(username, password), id)) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("ID Existente");
+            alert.setHeaderText(null);
+            alert.setContentText("El ID ingresado ya existe. No se puede agregar el producto.");
+            alert.showAndWait();
+            return;
+        }
 
         TextInputDialog dialogTitulo = new TextInputDialog();
         dialogTitulo.setTitle("Agregar Producto");
@@ -264,6 +279,22 @@ public class PantallaInicio {
         // Refresh table
         showProducts();
     }
+
+    public void filterProducts(String searchText) {
+        List<Producto> productos = productoDao.getAllProductos(connection.getConnection(username, password));
+
+        // Filtrar productos cuyo título contenga el texto ingresado
+        List<Producto> filteredProductos = productos.stream()
+                .filter(p -> p.getTitulo().toLowerCase().contains(searchText.toLowerCase()))
+                .sorted(Comparator.comparing(Producto::getCategoria)
+                        .thenComparing(Producto::getTitulo))
+                .toList();
+
+        // Convertir la lista filtrada a ObservableList y actualizar la tabla
+        ObservableList<Producto> observableProductos = FXCollections.observableArrayList(filteredProductos);
+        tablaProductos.setItems(observableProductos);
+    }
+
 
 
     //! <---------- FACTURAS ---------->

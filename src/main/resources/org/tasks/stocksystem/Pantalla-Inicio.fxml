@@ -105,6 +105,6 @@
             <Font name="Poppins Bold" size="13.0" />
          </font>
       </Button>
-      <TextField layoutX="604.0" layoutY="15.0" prefHeight="26.0" prefWidth="147.0" />
+      <TextField fx:id="searchField" alignment="BOTTOM_LEFT" layoutX="604.0" layoutY="15.0" prefHeight="26.0" prefWidth="147.0" promptText="Buscar producto" />
    </children>
 </AnchorPane>
