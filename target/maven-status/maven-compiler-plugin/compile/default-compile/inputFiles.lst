@@ -1,0 +1,12 @@
+/home/lovi/GitHub/Stock-System/src/main/java/conexion/DatabaseConnection.java
+/home/lovi/GitHub/Stock-System/src/main/java/dao/DetalleFacturaDao.java
+/home/lovi/GitHub/Stock-System/src/main/java/dao/FacturaDao.java
+/home/lovi/GitHub/Stock-System/src/main/java/dao/ProductoDao.java
+/home/lovi/GitHub/Stock-System/src/main/java/gui/PantallaInicio.java
+/home/lovi/GitHub/Stock-System/src/main/java/gui/PantallaLogin.java
+/home/lovi/GitHub/Stock-System/src/main/java/modelo/DetalleFactura.java
+/home/lovi/GitHub/Stock-System/src/main/java/modelo/Factura.java
+/home/lovi/GitHub/Stock-System/src/main/java/modelo/Producto.java
+/home/lovi/GitHub/Stock-System/src/main/java/module-info.java
+/home/lovi/GitHub/Stock-System/src/main/java/org/tasks/stocksystem/StockAppMain.java
+/home/lovi/GitHub/Stock-System/src/main/java/utils/AlertUtil.java
