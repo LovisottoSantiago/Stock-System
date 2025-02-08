@@ -4,6 +4,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import modelo.Factura;
 import modelo.Producto;
+import utils.AlertUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import java.util.logging.Level;
 import static conexion.DatabaseConnection.logger;
 
 public class FacturaDao {
+
+    AlertUtil alertUtil = new AlertUtil();
 
     public FacturaDao(){
 
@@ -60,6 +63,35 @@ public class FacturaDao {
         }
 
         return montoDiario;
+    }
+
+
+    //! <---------- ELIMINAR TABLA ---------->
+    public void deleteProduct(Connection conn, int id){
+        String deleteDetalles = "DELETE FROM DetalleFactura WHERE factura_id = ?";
+        String deleteFactura = "DELETE FROM Factura WHERE id = ?";
+
+        try(PreparedStatement stmtDetalles = conn.prepareStatement(deleteDetalles);
+            PreparedStatement stmtFactura = conn.prepareStatement(deleteFactura)) {
+
+            stmtDetalles.setInt(1, id); // Detalles
+            stmtDetalles.executeUpdate();
+
+            stmtFactura.setInt(1, id);
+            int rowsAffected = stmtFactura.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Factura eliminada con éxito.");
+            } else {
+                System.out.println("No se encontró la factura con ID: " + id);
+                alertUtil.mostrarAlerta("No se encontró la factura con ID: " + id);
+            }
+
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al eliminar factura", e);
+            alertUtil.mostrarAlerta("Error al eliminar la factura");
+        }
+
     }
 
 }

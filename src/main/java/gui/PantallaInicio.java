@@ -323,6 +323,17 @@ public class PantallaInicio {
         labelFacturaDiaria.setText(decimalFormat.format(montoDiarioTotal));
     }
 
+    public void eliminarFactura(){
+        TextInputDialog dialogId = new TextInputDialog();
+        dialogId.setTitle("Eliminar factura");
+        dialogId.setHeaderText(null);
+        dialogId.setContentText("ID:");
+        Optional<String> resultId = dialogId.showAndWait();
+        int id = resultId.map(Integer::parseInt).orElseThrow(() -> new RuntimeException("ID no ingresado"));
+        facturaDao.deleteProduct(connection.getConnection(username, password), id);
+        actualizarTodo();
+    }
+
 
     //! <---------- DETALLE FACTURAS ---------->
     public void showCarrito(){
