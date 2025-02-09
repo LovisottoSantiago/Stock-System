@@ -603,6 +603,7 @@ public class PantallaInicio {
         dialog.setHeaderText("Total: " + totalCarritoStr);
         dialog.setContentText("Pagó con: ");
 
+        dialog.getDialogPane().setStyle("-fx-font-size: 26px;");
         Optional<String> result = dialog.showAndWait();
         if (result.isEmpty()) {
             // El usuario canceló la operación
@@ -622,6 +623,7 @@ public class PantallaInicio {
                 alertError.setTitle("Pago insuficiente");
                 alertError.setHeaderText(null);
                 alertError.setContentText("El pago ingresado es menor al total de la compra.");
+                alertError.getDialogPane().setStyle("-fx-font-size: 26px;");
                 alertError.showAndWait();
                 return false;
             } else {
@@ -633,6 +635,7 @@ public class PantallaInicio {
                 alertInfo.setHeaderText(null);
                 String vueltoStr = decimalFormat.format(vuelto);
                 alertInfo.setContentText("El vuelto es: " + vueltoStr);
+                alertInfo.getDialogPane().setStyle("-fx-font-size: 26px;");
                 alertInfo.showAndWait();
                 return true;
             }
@@ -644,6 +647,7 @@ public class PantallaInicio {
             alertError.setTitle("Número inválido");
             alertError.setHeaderText(null);
             alertError.setContentText("Por favor, ingresa un número válido para el pago.");
+            alertError.getDialogPane().setStyle("-fx-font-size: 26px;");
             alertError.showAndWait();
             return false;
         }
