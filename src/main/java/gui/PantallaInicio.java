@@ -13,6 +13,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import modelo.DetalleFactura;
 import modelo.Factura;
 import javafx.util.Callback;
@@ -36,11 +38,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import java.util.Optional;
+
+import java.util.*;
 import java.sql.Timestamp;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class PantallaInicio {
 
@@ -91,14 +93,11 @@ public class PantallaInicio {
     @FXML
     private Label totalLabel; //para el carrito
     @FXML
-    private Label labelMontoEf;
-    @FXML
-    private Label labelMontoTr;
-    @FXML
-    private Label labelFacturaDiaria;
+    private Button facturacionBtn;
 
     // Extra
-
+    private Map<Integer, Image> imagenesProductos = new HashMap<>();
+    private static final String CONTRASENA_CORRECTA = "password";
 
 
     private DatabaseConnection connection;
@@ -113,12 +112,19 @@ public class PantallaInicio {
         this.username = username;
         this.password = password;
         System.out.println("Conexión establecida: " + connection);
+        precargarImagenes();
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             filterProducts(newValue);  // Llama al método cada vez que el usuario escribe algo
         });
 
         actualizarTodo();
+
+        // Configurar copia de ID para cada tabla
+        configurarCopiaId(tablaProductos, Producto::getId);
+        configurarCopiaId(tablaFacturas, Factura::getId);
+        configurarCopiaId(tablaCarrito, DetalleFactura::getProductoId);
+
     }
 
 
@@ -343,15 +349,26 @@ public class PantallaInicio {
     }
 
     public void obtenerMontoDiario() {
+        Stage ventanaMontos = new Stage();
+        ventanaMontos.setTitle("Montos Facturados");
+
         double montoEfectivo = facturaDao.getMontoDiario(connection.getConnection(username, password), "Efectivo");
         double montoTransferencia = facturaDao.getMontoDiario(connection.getConnection(username, password), "Transferencia");
         double montoDiarioTotal = montoEfectivo + montoTransferencia;
 
         DecimalFormat decimalFormat = new DecimalFormat("$#,###");
 
-        labelMontoEf.setText("Total diario facturado efectivo: " + decimalFormat.format(montoEfectivo));
-        labelMontoTr.setText("Total diario facturado transferencia: " + decimalFormat.format(montoTransferencia));
-        labelFacturaDiaria.setText(decimalFormat.format(montoDiarioTotal));
+        Label labelMontoEf = new Label("Total diario facturado efectivo: " + decimalFormat.format(montoEfectivo));
+        Label labelMontoTr = new Label("Total diario facturado transferencia: " + decimalFormat.format(montoTransferencia));
+        Label labelFacturaDiaria = new Label("Total facturado: " + decimalFormat.format(montoDiarioTotal));
+
+        VBox layout = new VBox(10, labelMontoEf, labelMontoTr, labelFacturaDiaria);
+        layout.setAlignment(Pos.CENTER);
+        layout.setMinWidth(400);
+        layout.setMaxHeight(400);
+
+        ventanaMontos.setScene(new Scene(layout));
+        ventanaMontos.show();
     }
 
     public void eliminarFactura(){
@@ -476,8 +493,6 @@ public class PantallaInicio {
     }
 
     private boolean mostrarImagenProducto(int productId) {
-        String imageUrl = productoDao.getImageUrlById(connection.getConnection(username, password), productId);
-
         Stage imageStage = new Stage();
         imageStage.initModality(Modality.APPLICATION_MODAL);
         imageStage.setTitle("Confirmar Producto");
@@ -486,27 +501,20 @@ public class PantallaInicio {
         StackPane imageContainer = new StackPane();
         imageContainer.setPrefSize(300, 320);
 
-        if (imageUrl == null || imageUrl.isEmpty()) {
+        Image imagen = imagenesProductos.get(productId);
+
+        if (imagen == null) {
             Rectangle placeholder = new Rectangle(300, 300, Color.LIGHTGRAY);
             Text noImageText = new Text("No hay imagen disponible");
             noImageText.setFill(Color.BLACK);
             noImageText.setFont(new Font(18));
             imageContainer.getChildren().addAll(placeholder, noImageText);
         } else {
-            try {
-                ImageView imageView = new ImageView(new Image(imageUrl, true));
-                imageView.setPreserveRatio(true);
-                imageView.setFitWidth(300);
-                imageView.setFitHeight(300);
-                imageContainer.getChildren().add(imageView);
-            } catch (Exception e) {
-
-                Rectangle placeholder = new Rectangle(300, 300, Color.LIGHTGRAY);
-                Text noInternetText = new Text("No hay internet");
-                noInternetText.setFill(Color.BLACK);
-                noInternetText.setFont(new Font(18));
-                imageContainer.getChildren().addAll(placeholder, noInternetText);
-            }
+            ImageView imageView = new ImageView(imagen);
+            imageView.setPreserveRatio(true);
+            imageView.setFitWidth(300);
+            imageView.setFitHeight(300);
+            imageContainer.getChildren().add(imageView);
         }
 
         Button acceptButton = new Button("Aceptar");
@@ -653,5 +661,67 @@ public class PantallaInicio {
         }
     }
 
+
+    private <T> void configurarCopiaId(TableView<T> tabla, Function<T, Integer> getIdFunction) {
+        tabla.setOnMouseClicked(event -> {
+            T itemSeleccionado = tabla.getSelectionModel().getSelectedItem();
+            if (itemSeleccionado != null) {
+                int idSeleccionado = getIdFunction.apply(itemSeleccionado);
+
+                // Copiar al portapapeles
+                Clipboard clipboard = Clipboard.getSystemClipboard();
+                ClipboardContent contenido = new ClipboardContent();
+                contenido.putString(String.valueOf(idSeleccionado));
+                clipboard.setContent(contenido);
+
+                System.out.println("ID copiado al portapapeles: " + idSeleccionado);
+            }
+        });
+    }
+
+
+    private void precargarImagenes() {
+        List<Producto> productos = productoDao.getAllProductos(connection.getConnection(username, password));
+
+        for (Producto producto : productos) {
+            String imageUrl = producto.getImagenUrl();
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                try {
+                    Image image = new Image(imageUrl, true);
+                    imagenesProductos.put(producto.getId(), image);
+                } catch (Exception e) {
+                    System.out.println("Error al cargar imagen del producto ID " + producto.getId());
+                }
+            }
+        }
+    }
+
+
+    public void mostrarFacturacion(){
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Ingresar Contraseña");
+        stage.setWidth(300);
+        stage.setHeight(400);
+
+        PasswordField passwordField = new PasswordField();
+        Button btnIngresar = new Button("Ingresar");
+        Label mensaje = new Label();
+
+        btnIngresar.setOnAction(e -> {
+            if (passwordField.getText().equals(CONTRASENA_CORRECTA)) {
+                stage.close();
+                obtenerMontoDiario();
+            } else {
+                mensaje.setText("Contraseña incorrecta");
+            }
+        });
+
+        VBox layout = new VBox(12, new Label("Ingrese la contraseña:"), passwordField, btnIngresar, mensaje);
+        layout.setAlignment(Pos.CENTER);
+        layout.setMinWidth(300);
+        stage.setScene(new Scene(layout));
+        stage.showAndWait();
+    }
 
 }

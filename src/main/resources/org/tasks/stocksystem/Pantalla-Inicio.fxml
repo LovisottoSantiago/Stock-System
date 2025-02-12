@@ -79,12 +79,6 @@
             <Font name="Poppins Bold" size="18.0" />
          </font>
       </Label>
-      <Separator layoutX="494.0" layoutY="516.0" orientation="VERTICAL" prefHeight="52.0" prefWidth="7.0" />
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="496.0" layoutY="516.0" prefHeight="27.0" prefWidth="254.0" text="Total diario facturado" textAlignment="CENTER">
-         <font>
-            <Font name="Poppins Bold" size="18.0" />
-         </font>
-      </Label>
       <Label fx:id="labelFacturaDiaria" alignment="CENTER" contentDisplay="CENTER" layoutX="496.0" layoutY="542.0" prefHeight="27.0" prefWidth="254.0" textAlignment="CENTER">
          <font>
             <Font name="Poppins Bold" size="24.0" />
@@ -106,5 +100,6 @@
          </font>
       </Button>
       <TextField fx:id="searchField" alignment="BOTTOM_LEFT" layoutX="604.0" layoutY="15.0" prefHeight="26.0" prefWidth="147.0" promptText="Buscar producto" />
+      <Button fx:id="facturacionBtn" layoutX="320.0" layoutY="529.0" mnemonicParsing="false" onAction="#mostrarFacturacion" text="Ver total vendido" />
    </children>
 </AnchorPane>
