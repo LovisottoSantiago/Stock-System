@@ -69,21 +69,6 @@
             <Font name="Poppins Bold" size="18.0" />
          </font></Button>
       <Separator layoutX="778.0" layoutY="385.0" prefHeight="5.0" prefWidth="427.0" />
-      <Label fx:id="labelMontoEf" alignment="CENTER" layoutX="26.0" layoutY="516.0" prefHeight="27.0" prefWidth="467.0" textAlignment="CENTER">
-         <font>
-            <Font name="Poppins Bold" size="18.0" />
-         </font>
-      </Label>
-      <Label fx:id="labelMontoTr" alignment="CENTER" layoutX="26.0" layoutY="550.0" prefHeight="27.0" prefWidth="467.0">
-         <font>
-            <Font name="Poppins Bold" size="18.0" />
-         </font>
-      </Label>
-      <Label fx:id="labelFacturaDiaria" alignment="CENTER" contentDisplay="CENTER" layoutX="496.0" layoutY="542.0" prefHeight="27.0" prefWidth="254.0" textAlignment="CENTER">
-         <font>
-            <Font name="Poppins Bold" size="24.0" />
-         </font>
-      </Label>
       <Button layoutX="787.0" layoutY="465.0" mnemonicParsing="false" onAction="#mostrarFacturaPorID" prefHeight="26.0" prefWidth="410.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Cargar factura">
          <font>
             <Font name="Poppins Bold" size="14.0" />
@@ -99,7 +84,7 @@
             <Font name="Poppins Bold" size="13.0" />
          </font>
       </Button>
-      <TextField fx:id="searchField" alignment="BOTTOM_LEFT" layoutX="604.0" layoutY="15.0" prefHeight="26.0" prefWidth="147.0" promptText="Buscar producto" />
-      <Button fx:id="facturacionBtn" layoutX="320.0" layoutY="529.0" mnemonicParsing="false" onAction="#mostrarFacturacion" text="Ver total vendido" />
+      <TextField fx:id="searchField" alignment="BOTTOM_LEFT" layoutX="604.0" layoutY="15.0" prefHeight="26.0" prefWidth="147.0" promptText="Buscar producto" style="-fx-border-color: black; -fx-border-radius: 5;" />
+      <Button fx:id="facturacionBtn" layoutX="325.0" layoutY="528.0" mnemonicParsing="false" onAction="#mostrarFacturacion" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Ver total vendido" />
    </children>
 </AnchorPane>
