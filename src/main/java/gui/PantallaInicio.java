@@ -92,8 +92,6 @@ public class PantallaInicio {
     private TableColumn<DetalleFactura, Double> carritoMonto;
     @FXML
     private Label totalLabel; //para el carrito
-    @FXML
-    private Button facturacionBtn;
 
     // Extra
     private Map<Integer, Image> imagenesProductos = new HashMap<>();
@@ -363,7 +361,7 @@ public class PantallaInicio {
         Label labelFacturaDiaria = new Label("Total facturado: " + decimalFormat.format(montoDiarioTotal));
 
         VBox layout = new VBox(10, labelMontoEf, labelMontoTr, labelFacturaDiaria);
-        layout.setAlignment(Pos.CENTER);
+        layout.setAlignment(Pos.CENTER_LEFT);
         layout.setMinWidth(400);
         layout.setMaxHeight(400);
 
@@ -559,8 +557,6 @@ public class PantallaInicio {
         } else {
             totalLabel.setText("Total: $0");
         }
-
-        obtenerMontoDiario();
     }
 
     public void mostrarFacturaPorID() {
@@ -701,10 +697,11 @@ public class PantallaInicio {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Ingresar Contraseña");
-        stage.setWidth(300);
-        stage.setHeight(400);
+        stage.setWidth(250);
+        stage.setHeight(250);
 
         PasswordField passwordField = new PasswordField();
+        passwordField.setMaxWidth(200);
         Button btnIngresar = new Button("Ingresar");
         Label mensaje = new Label();
 
@@ -717,9 +714,9 @@ public class PantallaInicio {
             }
         });
 
-        VBox layout = new VBox(12, new Label("Ingrese la contraseña:"), passwordField, btnIngresar, mensaje);
+        VBox layout = new VBox(10, new Label("Ingrese la contraseña:"), passwordField, btnIngresar, mensaje);
         layout.setAlignment(Pos.CENTER);
-        layout.setMinWidth(300);
+        layout.setMinWidth(200);
         stage.setScene(new Scene(layout));
         stage.showAndWait();
     }
