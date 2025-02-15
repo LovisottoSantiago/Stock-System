@@ -356,11 +356,16 @@ public class PantallaInicio {
 
         DecimalFormat decimalFormat = new DecimalFormat("$#,###");
 
-        Label labelMontoEf = new Label("Total diario facturado efectivo: " + decimalFormat.format(montoEfectivo));
-        Label labelMontoTr = new Label("Total diario facturado transferencia: " + decimalFormat.format(montoTransferencia));
+        Label labelMontoEf = new Label("Efectivo: " + decimalFormat.format(montoEfectivo));
+        Label labelMontoTr = new Label("Transferencia: " + decimalFormat.format(montoTransferencia));
         Label labelFacturaDiaria = new Label("Total facturado: " + decimalFormat.format(montoDiarioTotal));
 
+        labelMontoEf.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        labelMontoTr.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        labelFacturaDiaria.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;");
+
         VBox layout = new VBox(10, labelMontoEf, labelMontoTr, labelFacturaDiaria);
+        layout.setPadding(new Insets(20, 30, 20, 30));
         layout.setAlignment(Pos.CENTER_LEFT);
         layout.setMinWidth(400);
         layout.setMaxHeight(400);
