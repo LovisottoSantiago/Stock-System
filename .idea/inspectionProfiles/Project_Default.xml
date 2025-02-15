@@ -3,7 +3,7 @@
     <option name="myName" value="Project Default" />
     <inspection_tool class="ClassEscapesItsScope" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ExtractMethodRecommender" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="minLength" value="638" />
+      <option name="minLength" value="783" />
     </inspection_tool>
   </profile>
 </component>

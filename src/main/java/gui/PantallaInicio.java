@@ -698,7 +698,7 @@ public class PantallaInicio {
     }
 
 
-    public void mostrarFacturacion(){
+    public boolean solicitarContraseña() {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Ingresar Contraseña");
@@ -707,23 +707,65 @@ public class PantallaInicio {
 
         PasswordField passwordField = new PasswordField();
         passwordField.setMaxWidth(200);
+
         Button btnIngresar = new Button("Ingresar");
         Label mensaje = new Label();
+        mensaje.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: red;");
+
+        final Boolean[] accesoPermitido = {null};
 
         btnIngresar.setOnAction(e -> {
             if (passwordField.getText().equals(CONTRASENA_CORRECTA)) {
+                accesoPermitido[0] = true;
                 stage.close();
-                obtenerMontoDiario();
             } else {
                 mensaje.setText("Contraseña incorrecta");
+
+                accesoPermitido[0] = false;
             }
         });
 
-        VBox layout = new VBox(10, new Label("Ingrese la contraseña:"), passwordField, btnIngresar, mensaje);
+        VBox layout = new VBox(12, new Label("Ingrese la contraseña:"), passwordField, btnIngresar, mensaje);
         layout.setAlignment(Pos.CENTER);
-        layout.setMinWidth(200);
         stage.setScene(new Scene(layout));
+
         stage.showAndWait();
+
+        return Boolean.TRUE.equals(accesoPermitido[0]);
+    }
+
+
+    public void mostrarFacturacion() {
+        if (solicitarContraseña()) {
+            obtenerMontoDiario();
+        }
+    }
+
+    public void accesoAgregarProducto() {
+        if (solicitarContraseña()){
+            addProducts();
+        }
+    }
+
+
+    public void accesoModificarProducto() {
+        if (solicitarContraseña()) {
+            updateProducts();
+        }
+    }
+
+
+    public void accesoEliminarProducto() {
+        if (solicitarContraseña()){
+            deleteProducts();
+        }
+    }
+
+
+    public void accesoEliminarFactura() {
+        if (solicitarContraseña()) {
+            eliminarFactura();
+        }
     }
 
 }

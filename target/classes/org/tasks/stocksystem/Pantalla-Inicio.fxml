@@ -20,9 +20,9 @@
             <TableColumn fx:id="columnPrecio" editable="false" prefWidth="102.0" text="Precio" />
         </columns>
       </TableView>
-      <Button layoutX="24.0" layoutY="14.0" mnemonicParsing="false" onAction="#addProducts" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Agregar producto" />
-      <Button layoutX="316.0" layoutY="14.0" mnemonicParsing="false" onAction="#deleteProducts" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Eliminar producto" />
-      <Button layoutX="165.0" layoutY="14.0" mnemonicParsing="false" onAction="#updateProducts" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Modificar producto" />
+      <Button layoutX="24.0" layoutY="14.0" mnemonicParsing="false" onAction="#accesoAgregarProducto" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Agregar producto" />
+      <Button layoutX="316.0" layoutY="14.0" mnemonicParsing="false" onAction="#accesoEliminarProducto" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Eliminar producto" />
+      <Button layoutX="165.0" layoutY="14.0" mnemonicParsing="false" onAction="#accesoModificarProducto" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Modificar producto" />
       <TableView id="tablaCarrito" fx:id="tablaCarrito" layoutX="777.0" layoutY="58.0" prefHeight="210.0" prefWidth="427.0" stylesheets="@styles.css">
         <columns>
             <TableColumn fx:id="carritoId" prefWidth="75.0" text="ID" />
@@ -63,7 +63,7 @@
          <font>
             <Font name="Poppins Bold" size="18.0" />
          </font></Button>
-      <Button layoutX="462.0" layoutY="14.0" mnemonicParsing="false" onAction="#eliminarFactura" prefHeight="26.0" prefWidth="128.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Eliminar factura" />
+      <Button layoutX="462.0" layoutY="14.0" mnemonicParsing="false" onAction="#accesoEliminarFactura" prefHeight="26.0" prefWidth="128.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Eliminar factura" />
       <Button layoutX="786.0" layoutY="402.0" mnemonicParsing="false" onAction="#pagoEfectivo" prefHeight="46.0" prefWidth="196.0" style="-fx-background-color: GREEN;" text="Efectivo" textFill="WHITE">
          <font>
             <Font name="Poppins Bold" size="18.0" />
