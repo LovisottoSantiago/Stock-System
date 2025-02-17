@@ -15,11 +15,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.*;
 import modelo.DetalleFactura;
 import modelo.Factura;
 import javafx.util.Callback;
 import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.text.SimpleDateFormat;
@@ -29,8 +29,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -154,62 +152,81 @@ public class PantallaInicio {
     }
 
     public void addProducts(){
-        TextInputDialog dialogId = new TextInputDialog();
-        dialogId.setTitle("Agregar Producto");
-        dialogId.setHeaderText(null);
-        dialogId.setContentText("ID:");
-        Optional<String> resultId = dialogId.showAndWait();
-        int id = resultId.map(Integer::parseInt).orElseThrow(() -> new RuntimeException("ID no ingresado"));
+        Stage stage = new Stage();
+        stage.setTitle("Agregar Producto");
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(10));
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setAlignment(Pos.CENTER);
 
-        if (productoDao.productoExiste(connection.getConnection(username, password), id)) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("ID Existente");
-            alert.setHeaderText(null);
-            alert.setContentText("El ID ingresado ya existe. No se puede agregar el producto.");
-            alert.showAndWait();
-            return;
-        }
+        Label lblId = new Label("ID:");
+        TextField txtId = new TextField();
+        txtId.setMinWidth(300);
+        Label lblTitulo = new Label("Título:");
+        TextField txtTitulo = new TextField();
+        Label lblCategoria = new Label("Categoría:");
+        TextField txtCategoria = new TextField();
+        Label lblCantidad = new Label("Cantidad:");
+        TextField txtCantidad = new TextField();
+        Label lblPrecio = new Label("Precio:");
+        TextField txtPrecio = new TextField();
+        Label lblImagen = new Label("URL Imagen:");
+        TextField txtImagen = new TextField();
 
-        TextInputDialog dialogTitulo = new TextInputDialog();
-        dialogTitulo.setTitle("Agregar Producto");
-        dialogTitulo.setHeaderText(null);
-        dialogTitulo.setContentText("Título:");
-        Optional<String> resultTitulo = dialogTitulo.showAndWait();
-        String titulo = resultTitulo.orElse("");
+        Button btnGuardar = new Button("Guardar");
+        Button btnCancelar = new Button("Cancelar");
+        HBox buttonBox = new HBox(10, btnGuardar, btnCancelar);
+        buttonBox.setAlignment(Pos.CENTER);
 
-        TextInputDialog dialogCategoria = new TextInputDialog();
-        dialogCategoria.setTitle("Agregar Producto");
-        dialogCategoria.setHeaderText(null);
-        dialogCategoria.setContentText("Categoría:");
-        Optional<String> resultCategoria = dialogCategoria.showAndWait();
-        String categoria = resultCategoria.orElse("");
+        grid.add(lblId, 0, 0);
+        grid.add(txtId, 1, 0);
+        grid.add(lblTitulo, 0, 1);
+        grid.add(txtTitulo, 1, 1);
+        grid.add(lblCategoria, 0, 2);
+        grid.add(txtCategoria, 1, 2);
+        grid.add(lblCantidad, 0, 3);
+        grid.add(txtCantidad, 1, 3);
+        grid.add(lblPrecio, 0, 4);
+        grid.add(txtPrecio, 1, 4);
+        grid.add(lblImagen, 0, 5);
+        grid.add(txtImagen, 1, 5);
+        grid.add(buttonBox, 0, 6, 2, 1);
 
-        TextInputDialog dialogCantidad = new TextInputDialog();
-        dialogCantidad.setTitle("Agregar Producto");
-        dialogCantidad.setHeaderText(null);
-        dialogCantidad.setContentText("Cantidad:");
-        Optional<String> resultCantidad = dialogCantidad.showAndWait();
-        int cantidad = resultCantidad.map(Integer::parseInt).orElse(0);
+        btnGuardar.setOnAction(e -> {
+            try {
+                int id = Integer.parseInt(txtId.getText());
+                if (productoDao.productoExiste(connection.getConnection(username, password), id)) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("ID Existente");
+                    alert.setHeaderText(null);
+                    alert.setContentText("El ID ingresado ya existe. No se puede agregar el producto.");
+                    alert.showAndWait();
+                    return;
+                }
+                int cantidad = Integer.parseInt(txtCantidad.getText());
+                double precio = Double.parseDouble(txtPrecio.getText());
+                productoDao.insertProduct(
+                        connection.getConnection(username, password),
+                        id,
+                        txtTitulo.getText(),
+                        txtCategoria.getText(),
+                        cantidad,
+                        precio,
+                        txtImagen.getText()
+                );
+                showProducts(); // Refrescar la tabla
+                stage.close();
+            } catch (NumberFormatException ex) {
+                System.out.println("Error: ID, Cantidad y Precio deben ser numéricos");
+            }
+        });
 
-        TextInputDialog dialogPrecio = new TextInputDialog();
-        dialogPrecio.setTitle("Agregar Producto");
-        dialogPrecio.setHeaderText(null);
-        dialogPrecio.setContentText("Precio:");
-        Optional<String> resultPrecio = dialogPrecio.showAndWait();
-        double precio = resultPrecio.map(Double::parseDouble).orElse(0.0);
+        btnCancelar.setOnAction(e -> stage.close());
 
-        TextInputDialog dialogImagen = new TextInputDialog();
-        dialogImagen.setTitle("Agregar Imagen");
-        dialogImagen.setHeaderText(null);
-        dialogImagen.setContentText("Imagen:");
-        Optional<String> resultImagen = dialogImagen.showAndWait();
-        String imagen_url = resultImagen.orElse("");
-
-        // Insert into database
-        productoDao.insertProduct(connection.getConnection(username, password), id, titulo, categoria, cantidad, precio, imagen_url);
-
-        // Refresh table
-        showProducts();
+        Scene scene = new Scene(grid, 400, 350);
+        stage.setScene(scene);
+        stage.show();
     }
 
     public void deleteProducts(){
@@ -248,40 +265,69 @@ public class PantallaInicio {
             return;
         }
 
-        TextInputDialog dialogTitulo = new TextInputDialog(producto.getTitulo());
-        dialogTitulo.setTitle("Editar Producto");
-        dialogTitulo.setHeaderText(null);
-        dialogTitulo.setContentText("Nuevo Título:");
-        String titulo = dialogTitulo.showAndWait().orElse(producto.getTitulo());
+        Stage stage = new Stage();
+        stage.setTitle("Editar Producto");
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(10));
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setAlignment(Pos.CENTER);
 
-        TextInputDialog dialogCategoria = new TextInputDialog(producto.getCategoria());
-        dialogCategoria.setTitle("Editar Producto");
-        dialogCategoria.setHeaderText(null);
-        dialogCategoria.setContentText("Nueva Categoría:");
-        String categoria = dialogCategoria.showAndWait().orElse(producto.getCategoria());
+        Label lblTitulo = new Label("Título:");
+        TextField txtTitulo = new TextField(producto.getTitulo());
+        txtTitulo.setMinWidth(300);
+        Label lblCategoria = new Label("Categoría:");
+        TextField txtCategoria = new TextField(producto.getCategoria());
+        Label lblCantidad = new Label("Cantidad:");
+        TextField txtCantidad = new TextField(String.valueOf(producto.getCantidad()));
+        Label lblPrecio = new Label("Precio:");
+        TextField txtPrecio = new TextField(String.valueOf(producto.getPrecio()));
+        Label lblImagen = new Label("Imagen:");
+        TextField txtImagen = new TextField(producto.getImagenUrl());
 
-        TextInputDialog dialogCantidad = new TextInputDialog(String.valueOf(producto.getCantidad()));
-        dialogCantidad.setTitle("Editar Producto");
-        dialogCantidad.setHeaderText(null);
-        dialogCantidad.setContentText("Nueva Cantidad:");
-        int cantidad = Integer.parseInt(dialogCantidad.showAndWait().orElse(String.valueOf(producto.getCantidad())));
+        Button btnGuardar = new Button("Guardar");
+        Button btnCancelar = new Button("Cancelar");
+        HBox buttonBox = new HBox(10, btnGuardar, btnCancelar);
+        buttonBox.setAlignment(Pos.CENTER);
 
-        TextInputDialog dialogPrecio = new TextInputDialog(String.valueOf(producto.getPrecio()));
-        dialogPrecio.setTitle("Editar Producto");
-        dialogPrecio.setHeaderText(null);
-        dialogPrecio.setContentText("Nuevo Precio:");
-        double precio = Double.parseDouble(dialogPrecio.showAndWait().orElse(String.valueOf(producto.getPrecio())));
+        grid.add(lblTitulo, 0, 0);
+        grid.add(txtTitulo, 1, 0);
+        grid.add(lblCategoria, 0, 1);
+        grid.add(txtCategoria, 1, 1);
+        grid.add(lblCantidad, 0, 2);
+        grid.add(txtCantidad, 1, 2);
+        grid.add(lblPrecio, 0, 3);
+        grid.add(txtPrecio, 1, 3);
+        grid.add(lblImagen, 0, 4);
+        grid.add(txtImagen, 1, 4);
+        grid.add(buttonBox, 0, 5, 2, 1);
 
-        TextInputDialog dialogImagen = new TextInputDialog(producto.getImagenUrl());
-        dialogImagen.setTitle("Editar Producto");
-        dialogImagen.setHeaderText(null);
-        dialogImagen.setContentText("Nueva URL de Imagen:");
-        String imagen_url = dialogImagen.showAndWait().orElse(producto.getImagenUrl());
 
-        productoDao.updateProduct(connection.getConnection(username, password), id, titulo, categoria, cantidad, precio, imagen_url);
+        btnGuardar.setOnAction(e -> {
+            try {
+                int nuevaCantidad = Integer.parseInt(txtCantidad.getText());
+                double nuevoPrecio = Double.parseDouble(txtPrecio.getText());
+                productoDao.updateProduct(
+                        connection.getConnection(username, password),
+                        id,
+                        txtTitulo.getText(),
+                        txtCategoria.getText(),
+                        nuevaCantidad,
+                        nuevoPrecio,
+                        txtImagen.getText()
+                );
+                showProducts(); // Refrescar la tabla
+                stage.close();
+            } catch (NumberFormatException ex) {
+                System.out.println("Error: Cantidad y precio deben ser numéricos");
+            }
+        });
 
-        // Refresh table
-        showProducts();
+        btnCancelar.setOnAction(e -> stage.close());
+
+        Scene scene = new Scene(grid, 400, 300);
+        stage.setScene(scene);
+        stage.show();
     }
 
     public void filterProducts(String searchText) {
