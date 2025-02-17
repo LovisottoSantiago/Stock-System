@@ -95,7 +95,7 @@ public class PantallaInicio {
 
     // Extra
     private Map<Integer, Image> imagenesProductos = new HashMap<>();
-    private static final String CONTRASENA_CORRECTA = "password";
+    private static final String CONTRASENA_CORRECTA = "machupichu";
 
 
     private DatabaseConnection connection;
