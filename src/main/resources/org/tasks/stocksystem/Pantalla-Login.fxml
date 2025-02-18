@@ -23,7 +23,7 @@
       <font>
          <Font name="Poppins Bold" size="14.0" />
       </font></Label>
-    <Button onAction="#onHelloButtonClick" style="-fx-background-color: black;" text="Entrar" textFill="WHITE">
+    <Button defaultButton="true" onAction="#onHelloButtonClick" style="-fx-background-color: black;" text="Entrar" textFill="WHITE">
       <font>
          <Font name="Poppins Bold" size="18.0" />
       </font></Button>

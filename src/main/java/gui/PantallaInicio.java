@@ -4,6 +4,7 @@ import conexion.DatabaseConnection;
 import dao.DetalleFacturaDao;
 import dao.FacturaDao;
 import dao.ProductoDao;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import java.text.DecimalFormat;
 import javafx.collections.ObservableList;
@@ -15,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import modelo.DetalleFactura;
 import modelo.Factura;
@@ -36,6 +38,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import utils.AlertUtil;
 
 import java.util.*;
 import java.sql.Timestamp;
@@ -94,6 +97,7 @@ public class PantallaInicio {
     // Extra
     private Map<Integer, Image> imagenesProductos = new HashMap<>();
     private static final String CONTRASENA_CORRECTA = "machupichu";
+    private AlertUtil alertUtil;
 
 
     private DatabaseConnection connection;
@@ -154,6 +158,9 @@ public class PantallaInicio {
     public void addProducts(){
         Stage stage = new Stage();
         stage.setTitle("Agregar Producto");
+        stage.setMinWidth(400);
+        stage.setMinHeight(299);
+        stage.setMaxHeight(300);
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10));
         grid.setHgap(10);
@@ -171,12 +178,12 @@ public class PantallaInicio {
         TextField txtCantidad = new TextField();
         Label lblPrecio = new Label("Precio:");
         TextField txtPrecio = new TextField();
-        Label lblImagen = new Label("URL Imagen:");
+        Label lblImagen = new Label("Imagen:");
         TextField txtImagen = new TextField();
 
-        Button btnGuardar = new Button("Guardar");
         Button btnCancelar = new Button("Cancelar");
-        HBox buttonBox = new HBox(10, btnGuardar, btnCancelar);
+        Button btnGuardar = new Button("Guardar");
+        HBox buttonBox = new HBox(10, btnCancelar, btnGuardar);
         buttonBox.setAlignment(Pos.CENTER);
 
         grid.add(lblId, 0, 0);
@@ -267,6 +274,9 @@ public class PantallaInicio {
 
         Stage stage = new Stage();
         stage.setTitle("Editar Producto");
+        stage.setMinWidth(400);
+        stage.setMinHeight(299);
+        stage.setMaxHeight(300);
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10));
         grid.setHgap(10);
@@ -285,9 +295,9 @@ public class PantallaInicio {
         Label lblImagen = new Label("Imagen:");
         TextField txtImagen = new TextField(producto.getImagenUrl());
 
-        Button btnGuardar = new Button("Guardar");
         Button btnCancelar = new Button("Cancelar");
-        HBox buttonBox = new HBox(10, btnGuardar, btnCancelar);
+        Button btnGuardar = new Button("Guardar");
+        HBox buttonBox = new HBox(10, btnCancelar, btnGuardar);
         buttonBox.setAlignment(Pos.CENTER);
 
         grid.add(lblTitulo, 0, 0);
@@ -464,30 +474,52 @@ public class PantallaInicio {
     }
 
     public void addProductsCarrito(){
-        TextInputDialog dialogId = new TextInputDialog();
-        dialogId.setTitle("Agregar Producto");
-        dialogId.setHeaderText(null);
-        dialogId.setContentText("ID:");
-        Optional<String> resultId = dialogId.showAndWait();
-        int id = resultId.map(Integer::parseInt).orElseThrow(() -> new RuntimeException("ID no ingresado"));
+        while (true) {
+            TextInputDialog dialogId = new TextInputDialog();
+            dialogId.setTitle("Agregar Producto");
+            dialogId.setHeaderText(null);
+            dialogId.setContentText("ID (Ingrese 0 para salir):");
+            Optional<String> resultId = dialogId.showAndWait();
 
-        boolean confirmacion = mostrarImagenProducto(id);
-        if (!confirmacion) return;
+            if (resultId.isEmpty()) break; // Si el usuario cierra el diálogo
 
-        TextInputDialog dialogCantidad = new TextInputDialog();
-        dialogCantidad.setTitle("Agregar Producto");
-        dialogCantidad.setHeaderText(null);
-        dialogCantidad.setContentText("Cantidad:");
-        Optional<String> resultCantidad = dialogCantidad.showAndWait();
-        int cantidad = resultCantidad.map(Integer::parseInt).orElse(0);
+            int id;
+            try {
+                id = Integer.parseInt(resultId.get());
+            } catch (NumberFormatException e) {
+                alertUtil.mostrarAlerta("ID inválido, intente nuevamente.");
+                continue;
+            }
 
-        detalleFacturaDao.addProductoCarrito(connection.getConnection(username, password), id, cantidad );
-        double valor = detalleFacturaDao.obtenerMontoTotalCarrito(connection.getConnection(username, password));
-        DecimalFormat decimalFormat = new DecimalFormat("#,###");
-        String valorFormateado = decimalFormat.format(valor);
-        totalLabel.setText("Total: $" + valorFormateado);
-        // Refresh table
-        showCarrito();
+            if (id == 0) break; // Opción para salir
+
+            boolean confirmacion = mostrarImagenProducto(id);
+            if (!confirmacion) continue;
+
+            TextInputDialog dialogCantidad = new TextInputDialog();
+            dialogCantidad.setTitle("Agregar Producto");
+            dialogCantidad.setHeaderText(null);
+            dialogCantidad.setContentText("Cantidad:");
+            Optional<String> resultCantidad = dialogCantidad.showAndWait();
+
+            int cantidad;
+            try {
+                cantidad = resultCantidad.map(Integer::parseInt).orElse(0);
+                if (cantidad <= 0) throw new NumberFormatException();
+            } catch (NumberFormatException e) {
+                alertUtil.mostrarAlerta("Cantidad inválida, intente nuevamente.");
+                continue;
+            }
+
+            detalleFacturaDao.addProductoCarrito(connection.getConnection(username, password), id, cantidad);
+            double valor = detalleFacturaDao.obtenerMontoTotalCarrito(connection.getConnection(username, password));
+            DecimalFormat decimalFormat = new DecimalFormat("#,###");
+            String valorFormateado = decimalFormat.format(valor);
+            totalLabel.setText("Total: $" + valorFormateado);
+
+            // Refresh table
+            showCarrito();
+        }
     }
 
     public void deleteProductsCarrito(){
@@ -581,8 +613,10 @@ public class PantallaInicio {
             imageStage.close();
         });
 
+
         HBox buttonBox = new HBox(10, acceptButton, cancelButton);
         buttonBox.setAlignment(Pos.CENTER);
+
 
         VBox root = new VBox(5, imageContainer, buttonBox);
         root.setAlignment(Pos.CENTER);
@@ -708,7 +742,6 @@ public class PantallaInicio {
         }
     }
 
-
     private <T> void configurarCopiaId(TableView<T> tabla, Function<T, Integer> getIdFunction) {
         tabla.setOnMouseClicked(event -> {
             T itemSeleccionado = tabla.getSelectionModel().getSelectedItem();
@@ -726,7 +759,6 @@ public class PantallaInicio {
         });
     }
 
-
     private void precargarImagenes() {
         List<Producto> productos = productoDao.getAllProductos(connection.getConnection(username, password));
 
@@ -742,7 +774,6 @@ public class PantallaInicio {
             }
         }
     }
-
 
     public boolean solicitarContraseña() {
         Stage stage = new Stage();
@@ -771,6 +802,12 @@ public class PantallaInicio {
             }
         });
 
+        passwordField.setOnKeyPressed(event -> { // listener
+            if (event.getCode() == KeyCode.ENTER) {
+                btnIngresar.fire();
+            }
+        });
+
         VBox layout = new VBox(12, new Label("Ingrese la contraseña:"), passwordField, btnIngresar, mensaje);
         layout.setAlignment(Pos.CENTER);
         stage.setScene(new Scene(layout));
@@ -779,7 +816,6 @@ public class PantallaInicio {
 
         return Boolean.TRUE.equals(accesoPermitido[0]);
     }
-
 
     public void mostrarFacturacion() {
         if (solicitarContraseña()) {
@@ -793,20 +829,17 @@ public class PantallaInicio {
         }
     }
 
-
     public void accesoModificarProducto() {
         if (solicitarContraseña()) {
             updateProducts();
         }
     }
 
-
     public void accesoEliminarProducto() {
         if (solicitarContraseña()){
             deleteProducts();
         }
     }
-
 
     public void accesoEliminarFactura() {
         if (solicitarContraseña()) {
