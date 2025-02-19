@@ -31,7 +31,7 @@ public class DetalleFacturaDao {
 
             while (rs.next()) {
                 Producto producto = new Producto(
-                        rs.getInt("producto_id"),
+                        rs.getLong("producto_id"),
                         rs.getString("titulo"),
                         null,
                         0,
@@ -41,7 +41,7 @@ public class DetalleFacturaDao {
 
                 DetalleFactura detalle = new DetalleFactura(
                         rs.getInt("id"),
-                        rs.getInt("producto_id"),
+                        rs.getLong("producto_id"),
                         rs.getString("producto"),
                         rs.getInt("cantidad"),
                         rs.getDouble("precioUnitario"),
@@ -72,7 +72,7 @@ public class DetalleFacturaDao {
             while (rs.next()) {
                 DetalleFactura detalle = new DetalleFactura(
                         rs.getInt("id"),
-                        rs.getInt("producto_id"),
+                        rs.getLong("producto_id"),
                         rs.getString("titulo"),
                         rs.getInt("cantidad"),
                         rs.getDouble("precioUnitario"),
@@ -88,12 +88,12 @@ public class DetalleFacturaDao {
     }
 
 
-    public void addProductoCarrito(Connection conn, int productoId, int cantidad) {
+    public void addProductoCarrito(Connection conn, long productoId, int cantidad) {
         String obtenerPrecioSql = "SELECT precio, cantidad FROM Producto WHERE id = ?";
         String insertarSql = "INSERT INTO DetalleFactura (producto_id, cantidad, precioUnitario, subTotal, factura_id) VALUES (?, ?, ?, ?, NULL)";
 
         try (PreparedStatement obtenerPrecioStmt = conn.prepareStatement(obtenerPrecioSql)) {
-            obtenerPrecioStmt.setInt(1, productoId);
+            obtenerPrecioStmt.setLong(1, productoId);
             ResultSet rs = obtenerPrecioStmt.executeQuery();
 
             if (rs.next()) {
@@ -103,7 +103,7 @@ public class DetalleFacturaDao {
                     double subTotal = cantidad * precioUnitario;
 
                     try (PreparedStatement insertarStmt = conn.prepareStatement(insertarSql)) {
-                        insertarStmt.setInt(1, productoId);
+                        insertarStmt.setLong(1, productoId);
                         insertarStmt.setInt(2, cantidad);
                         insertarStmt.setDouble(3, precioUnitario);
                         insertarStmt.setDouble(4, subTotal);
@@ -125,11 +125,11 @@ public class DetalleFacturaDao {
     }
 
 
-    public void deleteProductoCarrito(Connection conn, int detalleId) {
+    public void deleteProductoCarrito(Connection conn, long detalleId) {
         String sql = "DELETE FROM DetalleFactura WHERE producto_id = ? AND factura_id IS NULL";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, detalleId);
+            stmt.setLong(1, detalleId);
             stmt.executeUpdate();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al eliminar producto del carrito", e);
@@ -179,7 +179,7 @@ public class DetalleFacturaDao {
 
                 for (DetalleFactura detalle : carrito) {
                     updateStockStmt.setInt(1, detalle.getCantidad());
-                    updateStockStmt.setInt(2, detalle.getProductoId());
+                    updateStockStmt.setLong(2, detalle.getProductoId());
                     updateStockStmt.executeUpdate();
                 }
             }
@@ -228,7 +228,7 @@ public class DetalleFacturaDao {
             while (rs.next()) {
                 DetalleFactura detalle = new DetalleFactura(
                         rs.getInt("id"),
-                        rs.getInt("producto_id"),
+                        rs.getLong("producto_id"),
                         rs.getString("titulo"),
                         rs.getInt("cantidad"),
                         rs.getDouble("precioUnitario"),
@@ -246,12 +246,12 @@ public class DetalleFacturaDao {
     }
 
     // Mostrar factura vieja aunque ya no tenga productos en stock
-    public void addProductosViejos(Connection conn, int productoId, int cantidad) {
+    public void addProductosViejos(Connection conn, long productoId, int cantidad) {
         String obtenerPrecioSql = "SELECT precio, cantidad FROM Producto WHERE id = ?";
         String insertarSql = "INSERT INTO DetalleFactura (producto_id, cantidad, precioUnitario, subTotal, factura_id) VALUES (?, ?, ?, ?, NULL)";
 
         try (PreparedStatement obtenerPrecioStmt = conn.prepareStatement(obtenerPrecioSql)) {
-            obtenerPrecioStmt.setInt(1, productoId);
+            obtenerPrecioStmt.setLong(1, productoId);
             ResultSet rs = obtenerPrecioStmt.executeQuery();
 
             if (rs.next()) {
@@ -262,7 +262,7 @@ public class DetalleFacturaDao {
                 if (cantidadDisponible >= cantidad) {
                     // Si hay stock suficiente, agregar el producto normalmente
                     try (PreparedStatement insertarStmt = conn.prepareStatement(insertarSql)) {
-                        insertarStmt.setInt(1, productoId);
+                        insertarStmt.setLong(1, productoId);
                         insertarStmt.setInt(2, cantidad);
                         insertarStmt.setDouble(3, precioUnitario);
                         insertarStmt.setDouble(4, subTotal);
@@ -275,7 +275,7 @@ public class DetalleFacturaDao {
 
                     // Se agrega la cantidad original, aunque no haya suficiente stock
                     try (PreparedStatement insertarStmt = conn.prepareStatement(insertarSql)) {
-                        insertarStmt.setInt(1, productoId);
+                        insertarStmt.setLong(1, productoId);
                         insertarStmt.setInt(2, cantidad);  // cantidad original
                         insertarStmt.setDouble(3, precioUnitario);
                         insertarStmt.setDouble(4, cantidad * precioUnitario);

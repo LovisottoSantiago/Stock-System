@@ -29,7 +29,7 @@ public class ProductoDao {
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 productos.add(new Producto(
-                        rs.getInt("id"),
+                        rs.getLong("id"),
                         rs.getString("titulo"),
                         rs.getString("categoria"),
                         rs.getInt("cantidad"),
@@ -45,10 +45,10 @@ public class ProductoDao {
 
 
     //! <---------- INSERT METHOD ---------->
-    public void insertProduct(Connection conn, int id, String titulo, String categoria, int cantidad, double precio, String imagen_url) {
+    public void insertProduct(Connection conn, long id, String titulo, String categoria, int cantidad, double precio, String imagen_url) {
         String query = "INSERT INTO Producto (id, titulo, categoria, cantidad, precio, imagen_url) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = conn.prepareStatement(query)) {
-            statement.setInt(1, id);
+            statement.setLong(1, id);
             statement.setString(2, titulo);
             statement.setString(3, categoria);
             statement.setInt(4, cantidad);
@@ -69,13 +69,13 @@ public class ProductoDao {
 
 
     //! <---------- DELETE METHOD ---------->
-    public void deleteProduct(Connection conn, int id) {
+    public void deleteProduct(Connection conn, long id) {
         String getTitleQuery = "SELECT titulo FROM Producto WHERE id = ?";
         String deleteQuery = "DELETE FROM Producto WHERE id = ?";
         String title = "";
 
         try (PreparedStatement getTitleStatement = conn.prepareStatement(getTitleQuery)) {
-            getTitleStatement.setInt(1, id);
+            getTitleStatement.setLong(1, id);
             ResultSet rs = getTitleStatement.executeQuery();
             if (rs.next()) {
                 title = rs.getString("titulo");
@@ -98,7 +98,7 @@ public class ProductoDao {
 
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try (PreparedStatement deleteStatement = conn.prepareStatement(deleteQuery)) {
-                deleteStatement.setInt(1, id);
+                deleteStatement.setLong(1, id);
 
                 int rowsAffected = deleteStatement.executeUpdate();
                 if (rowsAffected > 0) {
@@ -116,7 +116,7 @@ public class ProductoDao {
 
 
     //! <---------- UPDATE METHOD ---------->
-    public void updateProduct(Connection conn, int id, String titulo, String categoria, int cantidad, double precio, String imagen_url) {
+    public void updateProduct(Connection conn, long id, String titulo, String categoria, int cantidad, double precio, String imagen_url) {
         String sql = "UPDATE Producto SET titulo = ?, categoria = ?, cantidad = ?, precio = ?, imagen_url = ? WHERE id = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -125,7 +125,7 @@ public class ProductoDao {
             stmt.setInt(3, cantidad);
             stmt.setDouble(4, precio);
             stmt.setString(5, imagen_url);
-            stmt.setInt(6, id);
+            stmt.setLong(6, id);
 
             int rowsUpdated = stmt.executeUpdate();
 
@@ -142,10 +142,10 @@ public class ProductoDao {
     }
 
 
-    public String getImageUrlById(Connection conn, int id) {
+    public String getImageUrlById(Connection conn, long id) {
         String sql = "SELECT imagen_url FROM Producto WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
+            stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return rs.getString("imagen_url");
@@ -157,10 +157,10 @@ public class ProductoDao {
     }
 
 
-    public boolean productoExiste(Connection conn, int id){
+    public boolean productoExiste(Connection conn, long id){
         String query = "SELECT titulo FROM public.producto WHERE ID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)){
-            stmt.setInt(1, id);
+            stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return  true;

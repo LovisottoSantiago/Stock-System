@@ -4,15 +4,15 @@ import javafx.beans.property.*;
 
 public class DetalleFactura {
     private IntegerProperty id;
-    private IntegerProperty productoId;
+    private LongProperty productoId;
     private StringProperty producto;
     private IntegerProperty cantidad;
     private DoubleProperty precioUnitario;
     private DoubleProperty subTotal;
 
-    public DetalleFactura(int id, int productoId, String producto, int cantidad, double precioUnitario, double subTotal) {
+    public DetalleFactura(int id, long productoId, String producto, int cantidad, double precioUnitario, double subTotal) {
         this.id = new SimpleIntegerProperty(id);
-        this.productoId = new SimpleIntegerProperty(productoId);
+        this.productoId = new SimpleLongProperty(productoId);
         this.producto = new SimpleStringProperty(producto);
         this.cantidad = new SimpleIntegerProperty(cantidad);
         this.precioUnitario = new SimpleDoubleProperty(precioUnitario);
@@ -28,7 +28,7 @@ public class DetalleFactura {
 
     // Métodos normales para obtener los valores
     public int getId() { return id.get(); }
-    public int getProductoId() { return productoId.get(); };
+    public long getProductoId() { return productoId.get(); };
     public String getProducto() { return producto.get(); }
     public int getCantidad() { return cantidad.get(); }
     public double getPrecioUnitario() { return precioUnitario.get(); }
@@ -36,7 +36,7 @@ public class DetalleFactura {
 
     // Setters
     public void setId(int id) { this.id.set(id); }
-    public IntegerProperty productoIdProperty() { return productoId; }
+    public LongProperty productoIdProperty() { return productoId; }
     public void setProducto(String producto) { this.producto.set(producto); }
     public void setCantidad(int cantidad) { this.cantidad.set(cantidad); }
     public void setPrecioUnitario(double precioUnitario) { this.precioUnitario.set(precioUnitario); }

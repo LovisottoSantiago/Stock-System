@@ -26,18 +26,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.text.SimpleDateFormat;
 import modelo.Producto;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import utils.AlertUtil;
 
 import java.util.*;
@@ -51,7 +45,7 @@ public class PantallaInicio {
     @FXML
     private TableView<Producto> tablaProductos;
     @FXML
-    private TableColumn<Producto, Integer> columnId;
+    private TableColumn<Producto, Long> columnId;
     @FXML
     private TableColumn<Producto, String> columnTitulo;
     @FXML
@@ -82,7 +76,7 @@ public class PantallaInicio {
     @FXML
     private  TableView<DetalleFactura> tablaCarrito;
     @FXML
-    private TableColumn<DetalleFactura, Integer> carritoId;
+    private TableColumn<DetalleFactura, Long> carritoId;
     @FXML
     private TableColumn<DetalleFactura, String> carritoProducto;
     @FXML
@@ -95,7 +89,7 @@ public class PantallaInicio {
     private Label totalLabel; //para el carrito
 
     // Extra
-    private Map<Integer, Image> imagenesProductos = new HashMap<>();
+    private Map<Long, Image> imagenesProductos = new HashMap<>();
     private static final String CONTRASENA_CORRECTA = "machupichu";
     private AlertUtil alertUtil = new AlertUtil();
     @FXML
@@ -123,16 +117,15 @@ public class PantallaInicio {
         actualizarTodo();
 
         // Configurar copia de ID para cada tabla
-        configurarCopiaId(tablaProductos, Producto::getId);
+        configurarCopiaIdProducto(tablaProductos, Producto::getId);
         configurarCopiaId(tablaFacturas, Factura::getId);
-        configurarCopiaId(tablaCarrito, DetalleFactura::getProductoId);
+        configurarCopiaIdProducto(tablaCarrito, DetalleFactura::getProductoId); // long
 
         // Event listener para el agregar productos
         Platform.runLater(() -> {
             agregarBtn.getScene().setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.DIGIT0 || event.getCode() == KeyCode.NUMPAD0) {
                     addProductsCarrito();
-                    System.out.println("Prueba");
                 }
             });
         });
@@ -214,7 +207,7 @@ public class PantallaInicio {
 
         btnGuardar.setOnAction(e -> {
             try {
-                int id = Integer.parseInt(txtId.getText());
+                long id = Long.parseLong(txtId.getText());
                 if (productoDao.productoExiste(connection.getConnection(username, password), id)) {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setTitle("ID Existente");
@@ -254,7 +247,7 @@ public class PantallaInicio {
         dialog.setHeaderText("Ingrese los datos del producto");
         dialog.setContentText("ID:");
         Optional<String> resultId = dialog.showAndWait();
-        int id = resultId.map(Integer::parseInt).orElseThrow(() -> new RuntimeException("ID no ingresado"));
+        long id = resultId.map(Long::parseLong).orElseThrow(() -> new RuntimeException("ID no ingresado"));
 
         productoDao.deleteProduct(connection.getConnection(username, password), id);
 
@@ -270,7 +263,7 @@ public class PantallaInicio {
         Optional<String> resultId = dialogId.showAndWait();
         if (resultId.isEmpty()) return;
 
-        int id = Integer.parseInt(resultId.get());
+        long id = Long.parseLong(resultId.get());
         Producto producto = null;
         for (Producto p : tablaProductos.getItems()) {
             if (p.getId() == id) {
@@ -500,15 +493,20 @@ public class PantallaInicio {
 
             if (resultId.isEmpty()) break; // Si el usuario cierra el diálogo
 
-            int id;
+            long id;
             try {
-                id = Integer.parseInt(resultId.get());
+                id = Long.parseLong(resultId.get());
             } catch (NumberFormatException e) {
                 alertUtil.mostrarAlerta("ID inválido, intente nuevamente.");
                 continue;
             }
 
             if (id == 0) break; // Opción para salir
+
+            if (!productoDao.productoExiste(connection.getConnection(username, password), id)) {
+                alertUtil.mostrarAlerta("El producto con ID " + id + " no existe. Intente nuevamente.");
+                continue;
+            }
 
             boolean confirmacion = mostrarImagenProducto(id);
             if (!confirmacion) continue;
@@ -545,7 +543,7 @@ public class PantallaInicio {
         dialogId.setHeaderText(null);
         dialogId.setContentText("ID:");
         Optional<String> resultId = dialogId.showAndWait();
-        int id = resultId.map(Integer::parseInt).orElseThrow(() -> new RuntimeException("ID no ingresado"));
+        long id = resultId.map(Long::parseLong).orElseThrow(() -> new RuntimeException("ID no ingresado"));
 
         detalleFacturaDao.deleteProductoCarrito(connection.getConnection(username, password), id);
         showCarrito();
@@ -590,7 +588,7 @@ public class PantallaInicio {
         actualizarTodo();
     }
 
-    private boolean mostrarImagenProducto(int productId) {
+    private boolean mostrarImagenProducto(long productId) {
         Stage imageStage = new Stage();
         imageStage.initModality(Modality.APPLICATION_MODAL);
         imageStage.setTitle("Confirmar Producto");
@@ -776,6 +774,23 @@ public class PantallaInicio {
         });
     }
 
+    private <T> void configurarCopiaIdProducto(TableView<T> tabla, Function<T, Long> getLong) {
+        tabla.setOnMouseClicked(event -> {
+            T itemSeleccionado = tabla.getSelectionModel().getSelectedItem();
+            if (itemSeleccionado != null) {
+                long idSeleccionado = getLong.apply(itemSeleccionado);
+
+                // Copiar al portapapeles
+                Clipboard clipboard = Clipboard.getSystemClipboard();
+                ClipboardContent contenido = new ClipboardContent();
+                contenido.putString(String.valueOf(idSeleccionado));
+                clipboard.setContent(contenido);
+
+                System.out.println("ID copiado al portapapeles: " + idSeleccionado);
+            }
+        });
+    }
+
     private void precargarImagenes() {
         List<Producto> productos = productoDao.getAllProductos(connection.getConnection(username, password));
 
@@ -863,5 +878,7 @@ public class PantallaInicio {
             eliminarFactura();
         }
     }
+
+
 
 }
