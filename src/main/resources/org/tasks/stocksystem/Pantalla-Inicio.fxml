@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="testBtn" maxHeight="592.0" maxWidth="1256.0" minHeight="540.0" minWidth="1024.0" prefHeight="592.0" prefWidth="1228.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PantallaInicio">
+<AnchorPane fx:id="testBtn" maxHeight="680.0" maxWidth="1256.0" minHeight="680.0" minWidth="1024.0" prefHeight="680.0" prefWidth="1228.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PantallaInicio">
    <children>
-      <TableView id="tablaProductos" fx:id="tablaProductos" layoutX="24.0" layoutY="58.0" prefHeight="280.0" prefWidth="727.0" stylesheets="@styles.css">
+      <TableView id="tablaProductos" fx:id="tablaProductos" layoutX="24.0" layoutY="58.0" prefHeight="374.0" prefWidth="727.0" stylesheets="@styles.css">
         <columns>
           <TableColumn fx:id="columnId" editable="false" prefWidth="135.0" resizable="false" text="ID" />
           <TableColumn fx:id="columnTitulo" editable="false" prefWidth="214.0" text="Titulo" />
@@ -23,7 +23,7 @@
       <Button layoutX="24.0" layoutY="14.0" mnemonicParsing="false" onAction="#accesoAgregarProducto" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Agregar producto" />
       <Button layoutX="316.0" layoutY="14.0" mnemonicParsing="false" onAction="#accesoEliminarProducto" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Eliminar producto" />
       <Button layoutX="165.0" layoutY="14.0" mnemonicParsing="false" onAction="#accesoModificarProducto" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Modificar producto" />
-      <TableView id="tablaCarrito" fx:id="tablaCarrito" layoutX="777.0" layoutY="58.0" prefHeight="210.0" prefWidth="427.0" stylesheets="@styles.css">
+      <TableView id="tablaCarrito" fx:id="tablaCarrito" layoutX="777.0" layoutY="58.0" prefHeight="342.0" prefWidth="427.0" stylesheets="@styles.css">
         <columns>
             <TableColumn fx:id="carritoId" prefWidth="75.0" text="ID" />
           <TableColumn fx:id="carritoProducto" prefWidth="119.0" text="Producto" />
@@ -32,12 +32,12 @@
             <TableColumn fx:id="carritoMonto" prefWidth="78.0" text="Monto" />
         </columns>
       </TableView>
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="774.0" layoutY="14.0" prefHeight="35.0" prefWidth="339.0" text="CARRITO DE COMPRAS" textAlignment="CENTER">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="774.0" layoutY="14.0" prefHeight="35.0" prefWidth="339.0" text="STOCK &amp; FACTURACIÓN" textAlignment="CENTER">
          <font>
             <Font name="Poppins Black" size="24.0" />
          </font>
       </Label>
-      <TableView id="tablaFacturas" fx:id="tablaFacturas" layoutX="24.0" layoutY="359.0" prefHeight="148.0" prefWidth="727.0" stylesheets="@styles.css">
+      <TableView id="tablaFacturas" fx:id="tablaFacturas" layoutX="24.0" layoutY="452.0" prefHeight="159.0" prefWidth="727.0" stylesheets="@styles.css">
         <columns>
           <TableColumn fx:id="facturaId" prefWidth="77.0" text="ID" />
           <TableColumn fx:id="facturaFecha" prefWidth="184.0" text="Fecha" />
@@ -46,35 +46,35 @@
             <TableColumn fx:id="clienteTipo" prefWidth="154.0" text="Cliente" />
         </columns>
       </TableView>
-      <Label fx:id="totalLabel" layoutX="778.0" layoutY="278.0" prefHeight="52.0" prefWidth="427.0">
+      <Label fx:id="totalLabel" layoutX="777.0" layoutY="405.0" prefHeight="54.0" prefWidth="427.0">
          <font>
             <Font name="Poppins Bold" size="36.0" />
          </font>
       </Label>
-      <Button fx:id="agregarBtn" layoutX="779.0" layoutY="338.0" mnemonicParsing="false" onAction="#addProductsCarrito" prefHeight="35.0" prefWidth="254.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="0. Agregar producto al carrito">
+      <Button fx:id="agregarBtn" layoutX="778.0" layoutY="463.0" mnemonicParsing="false" onAction="#addProductsCarrito" prefHeight="35.0" prefWidth="254.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="0. Agregar producto al carrito">
          <font>
             <Font name="Poppins Bold" size="13.0" />
          </font></Button>
-      <Button layoutX="1041.0" layoutY="338.0" mnemonicParsing="false" onAction="#deleteProductsCarrito" prefHeight="35.0" prefWidth="162.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Eliminar producto">
+      <Button layoutX="1040.0" layoutY="463.0" mnemonicParsing="false" onAction="#deleteProductsCarrito" prefHeight="35.0" prefWidth="162.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Eliminar producto">
          <font>
             <Font name="Poppins Bold" size="13.0" />
          </font></Button>
-      <Button layoutX="999.0" layoutY="402.0" mnemonicParsing="false" onAction="#pagoTransferencia" prefHeight="46.0" prefWidth="196.0" style="-fx-background-color: #007eb5;" text="Transferencia" textFill="WHITE">
+      <Button layoutX="998.0" layoutY="527.0" mnemonicParsing="false" onAction="#pagoTransferencia" prefHeight="46.0" prefWidth="196.0" style="-fx-background-color: #007eb5;" text="Transferencia" textFill="WHITE">
          <font>
             <Font name="Poppins Bold" size="18.0" />
          </font></Button>
       <Button layoutX="462.0" layoutY="14.0" mnemonicParsing="false" onAction="#accesoEliminarFactura" prefHeight="26.0" prefWidth="128.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Eliminar factura" />
-      <Button layoutX="786.0" layoutY="402.0" mnemonicParsing="false" onAction="#pagoEfectivo" prefHeight="46.0" prefWidth="196.0" style="-fx-background-color: GREEN;" text="Efectivo" textFill="WHITE">
+      <Button layoutX="785.0" layoutY="527.0" mnemonicParsing="false" onAction="#pagoEfectivo" prefHeight="46.0" prefWidth="196.0" style="-fx-background-color: GREEN;" text="Efectivo" textFill="WHITE">
          <font>
             <Font name="Poppins Bold" size="18.0" />
          </font></Button>
-      <Separator layoutX="778.0" layoutY="385.0" prefHeight="5.0" prefWidth="427.0" />
-      <Button layoutX="787.0" layoutY="465.0" mnemonicParsing="false" onAction="#mostrarFacturaPorID" prefHeight="26.0" prefWidth="410.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Cargar factura">
+      <Separator layoutX="777.0" layoutY="510.0" prefHeight="5.0" prefWidth="427.0" />
+      <Button layoutX="786.0" layoutY="590.0" mnemonicParsing="false" onAction="#mostrarFacturaPorID" prefHeight="26.0" prefWidth="410.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Cargar factura">
          <font>
             <Font name="Poppins Bold" size="14.0" />
          </font>
       </Button>
-      <Button layoutX="787.0" layoutY="503.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="410.0" style="-fx-background-color: grey;" text="Imprimir ticket" textFill="WHITE">
+      <Button layoutX="786.0" layoutY="628.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="410.0" style="-fx-background-color: grey;" text="Imprimir ticket" textFill="WHITE">
          <font>
             <Font name="Poppins Bold" size="18.0" />
          </font>
@@ -85,6 +85,6 @@
          </font>
       </Button>
       <TextField fx:id="searchField" alignment="BOTTOM_LEFT" layoutX="604.0" layoutY="15.0" prefHeight="26.0" prefWidth="147.0" promptText="Buscar producto" style="-fx-border-color: black; -fx-border-radius: 5;" />
-      <Button fx:id="facturacionBtn" layoutX="325.0" layoutY="528.0" mnemonicParsing="false" onAction="#mostrarFacturacion" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Ver total vendido" />
+      <Button fx:id="facturacionBtn" layoutX="325.0" layoutY="632.0" mnemonicParsing="false" onAction="#mostrarFacturacion" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 5;" text="Ver total vendido" />
    </children>
 </AnchorPane>

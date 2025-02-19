@@ -354,10 +354,15 @@ public class PantallaInicio {
 
     public void filterProducts(String searchText) {
         List<Producto> productos = productoDao.getAllProductos(connection.getConnection(username, password));
+        boolean isNumeric = searchText.matches("\\d+");
 
         // Filtrar productos cuyo título contenga el texto ingresado
         List<Producto> filteredProductos = productos.stream()
-                .filter(p -> p.getTitulo().toLowerCase().contains(searchText.toLowerCase()))
+                .filter(p -> isNumeric
+                        ? String.valueOf(p.getId()).contains(searchText)  // Filtrar por ID si es un número
+                        : p.getTitulo().toLowerCase().contains(searchText.toLowerCase()) // Filtrar por título si es texto
+                        || p.getCategoria().toLowerCase().contains(searchText.toLowerCase()) // Filtrar por categoria
+                )
                 .sorted(Comparator.comparing(Producto::getCategoria)
                         .thenComparing(Producto::getTitulo))
                 .toList();
