@@ -97,7 +97,9 @@ public class PantallaInicio {
     // Extra
     private Map<Integer, Image> imagenesProductos = new HashMap<>();
     private static final String CONTRASENA_CORRECTA = "machupichu";
-    private AlertUtil alertUtil;
+    private AlertUtil alertUtil = new AlertUtil();
+    @FXML
+    public Button agregarBtn;
 
 
     private DatabaseConnection connection;
@@ -124,6 +126,16 @@ public class PantallaInicio {
         configurarCopiaId(tablaProductos, Producto::getId);
         configurarCopiaId(tablaFacturas, Factura::getId);
         configurarCopiaId(tablaCarrito, DetalleFactura::getProductoId);
+
+        // Event listener para el agregar productos
+        Platform.runLater(() -> {
+            agregarBtn.getScene().setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.DIGIT0 || event.getCode() == KeyCode.NUMPAD0) {
+                    addProductsCarrito();
+                    System.out.println("Prueba");
+                }
+            });
+        });
 
     }
 
