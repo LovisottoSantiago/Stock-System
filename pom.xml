@@ -46,6 +46,15 @@
             <version>42.7.4</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.javapos/javapos -->
+        <dependency>
+            <groupId>org.javapos</groupId>
+            <artifactId>javapos</artifactId>
+            <version>1.14.0</version>
+        </dependency>
+
+
+
     </dependencies>
 
     <build>

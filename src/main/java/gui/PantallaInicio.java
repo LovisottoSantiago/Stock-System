@@ -18,6 +18,9 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import jpos.POSPrinter;
+import jpos.POSPrinterConst;
+import jpos.POSPrinterControl113;
 import modelo.DetalleFactura;
 import modelo.Factura;
 import javafx.util.Callback;
@@ -34,10 +37,19 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import utils.AlertUtil;
 
+import jpos.JposException;
+import jpos.POSPrinter;
+import jpos.POSPrinterConst;
+import jpos.POSPrinterControl113;
+import java.util.List;
+import java.util.Optional;
+
+
 import java.util.*;
 import java.sql.Timestamp;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.logging.Level;
 
 public class PantallaInicio {
 
@@ -452,7 +464,7 @@ public class PantallaInicio {
     }
 
 
-    //! <---------- DETALLE FACTURAS ---------->
+    //! <---------- CARRITO, DETALLE FACTURAS ---------->
     public void showCarrito(){
         List<DetalleFactura> detalleFacturas = detalleFacturaDao.getCarritoActual(connection.getConnection(username, password));
 
@@ -879,6 +891,64 @@ public class PantallaInicio {
         }
     }
 
+    public void imprimirFacturaPorID() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Cargar Factura");
+        dialog.setHeaderText(null);
+        dialog.setContentText("ID de la factura:");
+
+        Optional<String> resultId = dialog.showAndWait();
+        if (!resultId.isPresent() || resultId.get().trim().isEmpty()) {
+            return;
+        }
+
+        int facturaId;
+        try {
+            facturaId = Integer.parseInt(resultId.get().trim());
+        } catch (NumberFormatException e) {
+            return;
+        }
+
+        // Obtener los detalles de la factura
+        List<DetalleFactura> detalles = detalleFacturaDao.getDetallesFacturaPorId(connection.getConnection(username, password), facturaId);
+        if (detalles.isEmpty()) {
+            alertUtil.mostrarAlerta("No se encontraron detalles para la factura.");
+            return;
+        }
+
+        // Obtener nombre del cliente
+        String nombreCliente = facturaDao.obtenerNombreClientePorId(connection.getConnection(username, password), facturaId);
+
+        // Conectar con la impresora POS utilizando POSPrinter
+        try {
+            POSPrinter printer = new POSPrinter();
+            printer.open("POSPrinter"); // El nombre del dispositivo debe coincidir con el configurado en tu sistema POS
+            printer.claim(1000);
+            printer.setAsyncMode(false);
+            printer.setCharacterSet(38); // Ajuste del conjunto de caracteres (en este caso, 38 es ANSI)
+
+
+            printer.printNormal(POSPrinterConst.PTR_S_RECEIPT, "SISTEMA DE STOCK & FACTURACION LOVISOTTO");
+            printer.printNormal(POSPrinterConst.PTR_S_RECEIPT, "Factura para: " + nombreCliente);
+            printer.printNormal(POSPrinterConst.PTR_S_RECEIPT, "Factura ID: " + facturaId);
+            printer.printNormal(POSPrinterConst.PTR_S_RECEIPT, "----------------------------------");
+
+            for (DetalleFactura detalle : detalles) {
+                String textoProducto = String.format("%-20s x%d $%.2f", detalle.getProducto(), detalle.getCantidad(), detalle.getSubTotal());
+                printer.printNormal(POSPrinterConst.PTR_S_RECEIPT, textoProducto);
+            }
+
+            double total = detalles.stream().mapToDouble(DetalleFactura::getSubTotal).sum();
+            printer.printNormal(POSPrinterConst.PTR_S_RECEIPT, String.format("Total: $%.2f", total));
+
+            // Liberar la impresora y cerrar la conexión
+            printer.release();
+            printer.close();
+
+        } catch (JposException e) {
+            alertUtil.mostrarAlerta("Error al imprimir la factura.");
+        }
+    }
 
 
 }

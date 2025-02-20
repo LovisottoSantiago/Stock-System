@@ -94,4 +94,23 @@ public class FacturaDao {
 
     }
 
+
+    //! <---------- NOMBRE CLIENTE ---------->
+    public String obtenerNombreClientePorId(Connection conn, int facturaId) {
+        String sql = "SELECT c.nombre FROM Cliente c " +
+                "JOIN Factura f ON f.cliente_id = c.id " +
+                "WHERE f.id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, facturaId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("nombre");
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al obtener el nombre del cliente para la factura: " + facturaId, e);
+        }
+        return "Desconocido";
+    }
+
+
 }

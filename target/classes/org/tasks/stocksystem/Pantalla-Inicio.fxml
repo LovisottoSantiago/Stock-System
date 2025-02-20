@@ -74,7 +74,7 @@
             <Font name="Poppins Bold" size="14.0" />
          </font>
       </Button>
-      <Button layoutX="786.0" layoutY="628.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="410.0" style="-fx-background-color: grey;" text="Imprimir ticket" textFill="WHITE">
+      <Button layoutX="786.0" layoutY="628.0" mnemonicParsing="false" onAction="#imprimirFacturaPorID" prefHeight="35.0" prefWidth="410.0" style="-fx-background-color: grey;" text="Imprimir ticket" textFill="WHITE">
          <font>
             <Font name="Poppins Bold" size="18.0" />
          </font>
